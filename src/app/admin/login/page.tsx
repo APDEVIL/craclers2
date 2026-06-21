@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,10 @@ export default function AdminLoginPage() {
 		setError(null);
 		setLoading(true);
 
-		const { error: signInError } = await authClient.signIn.email({ email, password });
+		const { error: signInError } = await authClient.signIn.email({
+			email,
+			password,
+		});
 
 		setLoading(false);
 		if (signInError) {
@@ -34,26 +37,49 @@ export default function AdminLoginPage() {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-[#F7F7FB] px-4">
-			<form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5 rounded-xl bg-white p-8 shadow-md">
+			<form
+				className="w-full max-w-sm space-y-5 rounded-xl bg-white p-8 shadow-md"
+				onSubmit={handleSubmit}
+			>
 				<div className="text-center">
 					<span className="mx-auto grid h-12 w-12 place-items-center rounded-md bg-[#14163A] font-bold text-[#D9A640] text-base">
 						SS
 					</span>
-					<h1 className="mt-3 font-extrabold text-[#14163A] text-xl">Admin sign in</h1>
+					<h1 className="mt-3 font-extrabold text-[#14163A] text-xl">
+						Admin sign in
+					</h1>
 				</div>
 
 				<div className="space-y-1.5">
 					<Label htmlFor="email">Email</Label>
-					<Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+					<Input
+						id="email"
+						onChange={(e) => setEmail(e.target.value)}
+						required
+						type="email"
+						value={email}
+					/>
 				</div>
 				<div className="space-y-1.5">
 					<Label htmlFor="password">Password</Label>
-					<Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+					<Input
+						id="password"
+						onChange={(e) => setPassword(e.target.value)}
+						required
+						type="password"
+						value={password}
+					/>
 				</div>
 
-				{error ? <p className="font-medium text-[#C8202F] text-sm">{error}</p> : null}
+				{error ? (
+					<p className="font-medium text-[#C8202F] text-sm">{error}</p>
+				) : null}
 
-				<Button type="submit" disabled={loading} className="w-full bg-[#14163A] font-semibold hover:bg-[#1f2257]">
+				<Button
+					className="w-full bg-[#14163A] font-semibold hover:bg-[#1f2257]"
+					disabled={loading}
+					type="submit"
+				>
 					{loading ? "Signing in…" : "Sign in"}
 				</Button>
 			</form>

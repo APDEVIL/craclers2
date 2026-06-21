@@ -2,16 +2,36 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { UploadButton } from "@/lib/uploadthing";
 import { api } from "@/trpc/react";
 
@@ -22,7 +42,9 @@ const productFormSchema = z.object({
 	unit: z.string().min(1).max(20),
 	imageUrl: z.string().url().optional().or(z.literal("")),
 	mrpPrice: z.coerce.number().positive("MRP must be greater than 0"),
-	discountPrice: z.coerce.number().positive("Discount price must be greater than 0"),
+	discountPrice: z.coerce
+		.number()
+		.positive("Discount price must be greater than 0"),
 	sortOrder: z.coerce.number().int(),
 	isActive: z.boolean(),
 });
@@ -64,7 +86,13 @@ function defaultsFor(product?: ProductFormProduct): ProductFormValues {
 	};
 }
 
-export function ProductFormDialog({ open, onOpenChange, product, categories, onSaved }: ProductFormDialogProps) {
+export function ProductFormDialog({
+	open,
+	onOpenChange,
+	product,
+	categories,
+	onSaved,
+}: ProductFormDialogProps) {
 	const isEditing = Boolean(product);
 
 	const form = useForm<ProductFormValues>({
@@ -106,14 +134,16 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog onOpenChange={onOpenChange} open={open}>
 			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
-					<DialogTitle>{isEditing ? "Edit product" : "Add product"}</DialogTitle>
+					<DialogTitle>
+						{isEditing ? "Edit product" : "Add product"}
+					</DialogTitle>
 				</DialogHeader>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+					<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
 							control={form.control}
 							name="categoryId"
@@ -190,7 +220,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 									<FormItem>
 										<FormLabel>MRP price (₹)</FormLabel>
 										<FormControl>
-											<Input type="number" step="0.01" {...field} />
+											<Input step="0.01" type="number" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -203,7 +233,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 									<FormItem>
 										<FormLabel>Discount price (₹)</FormLabel>
 										<FormControl>
-											<Input type="number" step="0.01" {...field} />
+											<Input step="0.01" type="number" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -218,18 +248,26 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 								<FormItem>
 									<FormLabel>Product image</FormLabel>
 									<div className="flex items-center gap-3">
+										{/* Replace the existing <img /> inside your imageUrl FormField with this: */}
 										{field.value ? (
-											<img src={field.value} alt="" className="h-12 w-12 rounded-md border object-cover" />
+											<Image
+												alt="Category icon"
+												className="h-10 w-10 rounded-md border object-contain"
+												height={40}
+												src={field.value}
+												width={40}
+											/>
 										) : null}
 										<UploadButton
+											appearance={{
+												button:
+													"bg-[#14163A] text-white text-xs px-3 py-1.5 rounded-md",
+												allowedContent: "hidden",
+											}}
 											endpoint="productImage"
 											onClientUploadComplete={(res) => {
 												const url = res[0]?.url;
 												if (url) field.onChange(url);
-											}}
-											appearance={{
-												button: "bg-[#14163A] text-white text-xs px-3 py-1.5 rounded-md",
-												allowedContent: "hidden",
 											}}
 										/>
 									</div>
@@ -258,19 +296,38 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-end gap-2 pb-1.5">
 										<FormControl>
-											<Checkbox checked={field.value} onCheckedChange={field.onChange} />
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
 										</FormControl>
-										<FormLabel className="!mt-0">Visible on price list</FormLabel>
+										<FormLabel className="!mt-0">
+											Visible on price list
+										</FormLabel>
 									</FormItem>
 								)}
 							/>
 						</div>
 
-						{mutation.error ? <p className="font-medium text-[#C8202F] text-sm">{mutation.error.message}</p> : null}
+						{mutation.error ? (
+							<p className="font-medium text-[#C8202F] text-sm">
+								{mutation.error.message}
+							</p>
+						) : null}
 
 						<DialogFooter>
-							<Button type="submit" disabled={mutation.isPending} className="bg-[#14163A] hover:bg-[#1f2257]">
-								{mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isEditing ? "Save changes" : "Add product"}
+							<Button
+								className="bg-[#14163A] hover:bg-[#1f2257]"
+								disabled={mutation.isPending}
+								type="submit"
+							>
+								{mutation.isPending ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : isEditing ? (
+									"Save changes"
+								) : (
+									"Add product"
+								)}
 							</Button>
 						</DialogFooter>
 					</form>

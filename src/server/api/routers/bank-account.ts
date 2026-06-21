@@ -2,7 +2,11 @@ import { TRPCError } from "@trpc/server";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
+import {
+	createTRPCRouter,
+	protectedProcedure,
+	publicProcedure,
+} from "@/server/api/trpc";
 import { bankAccount } from "@/server/db/schema";
 
 const bankAccountInput = z.object({
@@ -30,7 +34,9 @@ export const bankAccountRouter = createTRPCRouter({
 
 	create: protectedProcedure
 		.input(bankAccountInput)
-		.mutation(({ ctx, input }) => ctx.db.insert(bankAccount).values(input).returning()),
+		.mutation(({ ctx, input }) =>
+			ctx.db.insert(bankAccount).values(input).returning(),
+		),
 
 	update: protectedProcedure
 		.input(bankAccountInput.partial().extend({ id: z.string() }))

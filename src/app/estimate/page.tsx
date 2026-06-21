@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { CartSummaryBar } from "@/app/_components/estimate/cart-summary-bar";
 import { CategoryFilterBar } from "@/app/_components/estimate/category-filter-bar";
@@ -28,27 +28,38 @@ export default function EstimatePage() {
 	const minimumOrderAmount = Number(settings?.minimumOrderAmount ?? 0);
 
 	return (
-		<div id="price-list" className="mx-auto max-w-7xl space-y-4 px-4 py-8 pb-28 lg:pb-12">
+		<div
+			className="mx-auto max-w-7xl space-y-4 px-4 py-8 pb-28 lg:pb-12"
+			id="price-list"
+		>
 			<div className="text-center">
-				<h1 className="font-extrabold text-2xl text-[#14163A] sm:text-3xl">Build your estimate</h1>
+				<h1 className="font-extrabold text-2xl text-[#14163A] sm:text-3xl">
+					Build your estimate
+				</h1>
 				<p className="mt-1 text-[#14163A]/60 text-sm">
-					Minimum order amount: <span className="font-semibold text-[#C8202F]">₹{minimumOrderAmount.toFixed(2)}</span>
+					Minimum order amount:{" "}
+					<span className="font-semibold text-[#C8202F]">
+						₹{minimumOrderAmount.toFixed(2)}
+					</span>
 				</p>
 			</div>
 
 			<CategoryFilterBar
 				categories={categories}
 				categoryId={categoryId}
-				onCategoryChange={setCategoryId}
-				search={search}
-				onSearchChange={setSearch}
 				onCartClick={() => setCheckoutOpen(true)}
+				onCategoryChange={setCategoryId}
+				onSearchChange={setSearch}
+				search={search}
 			/>
 
 			<PriceListTable categoryId={categoryId} search={search} />
 
-			<CartSummaryBar minimumOrderAmount={minimumOrderAmount} onCheckout={() => setCheckoutOpen(true)} />
-			<CheckoutDialog open={checkoutOpen} onOpenChange={setCheckoutOpen} />
+			<CartSummaryBar
+				minimumOrderAmount={minimumOrderAmount}
+				onCheckout={() => setCheckoutOpen(true)}
+			/>
+			<CheckoutDialog onOpenChange={setCheckoutOpen} open={checkoutOpen} />
 		</div>
 	);
 }

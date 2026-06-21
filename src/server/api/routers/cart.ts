@@ -81,10 +81,9 @@ export const cartRouter = createTRPCRouter({
 				guestSessionId: guestSession.id,
 				lastActiveAt: guestSession.lastActiveAt,
 				itemCount: sql<number>`count(${cartItem.id})`.as("item_count"),
-				totalQuantity:
-					sql<number>`coalesce(sum(${cartItem.quantity}), 0)`.as(
-						"total_quantity",
-					),
+				totalQuantity: sql<number>`coalesce(sum(${cartItem.quantity}), 0)`.as(
+					"total_quantity",
+				),
 			})
 			.from(guestSession)
 			.leftJoin(cartItem, eq(cartItem.guestSessionId, guestSession.id))

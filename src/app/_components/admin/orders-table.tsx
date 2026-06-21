@@ -2,8 +2,21 @@
 
 import Link from "next/link";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { api } from "@/trpc/react";
 
 type OrderStatus = "pending" | "contacted" | "confirmed" | "cancelled";
@@ -15,7 +28,12 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
 	cancelled: "bg-red-100 text-red-800",
 };
 
-const STATUS_OPTIONS: OrderStatus[] = ["pending", "contacted", "confirmed", "cancelled"];
+const STATUS_OPTIONS: OrderStatus[] = [
+	"pending",
+	"contacted",
+	"confirmed",
+	"cancelled",
+];
 
 const SKELETON_ROWS = ["row-1", "row-2", "row-3", "row-4", "row-5"] as const;
 
@@ -25,7 +43,9 @@ interface OrdersTableProps {
 
 export function OrdersTable({ statusFilter }: OrdersTableProps) {
 	const utils = api.useUtils();
-	const { data: orders = [], isLoading } = api.order.list.useQuery({ status: statusFilter });
+	const { data: orders = [], isLoading } = api.order.list.useQuery({
+		status: statusFilter,
+	});
 
 	const updateStatusMutation = api.order.updateStatus.useMutation({
 		onSuccess: () => void utils.order.list.invalidate(),
@@ -35,7 +55,10 @@ export function OrdersTable({ statusFilter }: OrdersTableProps) {
 		return (
 			<div className="space-y-2">
 				{SKELETON_ROWS.map((rowKey) => (
-					<div key={rowKey} className="h-12 animate-pulse rounded-md bg-[#14163A]/5" />
+					<div
+						className="h-12 animate-pulse rounded-md bg-[#14163A]/5"
+						key={rowKey}
+					/>
 				))}
 			</div>
 		);
@@ -45,7 +68,9 @@ export function OrdersTable({ statusFilter }: OrdersTableProps) {
 		return (
 			<div className="rounded-lg border border-[#14163A]/15 border-dashed py-16 text-center">
 				<p className="font-semibold text-[#14163A]">No estimates yet</p>
-				<p className="text-[#14163A]/55 text-sm">Submitted estimates will show up here.</p>
+				<p className="text-[#14163A]/55 text-sm">
+					Submitted estimates will show up here.
+				</p>
 			</div>
 		);
 	}
@@ -68,7 +93,10 @@ export function OrdersTable({ statusFilter }: OrdersTableProps) {
 					{orders.map((order) => (
 						<TableRow key={order.id}>
 							<TableCell className="font-semibold text-[#14163A]">
-								<Link className="hover:underline" href={`/admin/orders/${order.id}`}>
+								<Link
+									className="hover:underline"
+									href={`/admin/orders/${order.id}`}
+								>
 									{order.billNumber}
 								</Link>
 							</TableCell>
@@ -84,13 +112,24 @@ export function OrdersTable({ statusFilter }: OrdersTableProps) {
 								</a>
 							</TableCell>
 							<TableCell>{order.customerState}</TableCell>
-							<TableCell className="text-right font-semibold">₹{order.grandTotal}</TableCell>
+							<TableCell className="text-right font-semibold">
+								₹{order.grandTotal}
+							</TableCell>
 							<TableCell className="text-[#14163A]/60">
-								{new Date(order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+								{new Date(order.createdAt).toLocaleDateString("en-IN", {
+									day: "2-digit",
+									month: "short",
+									year: "numeric",
+								})}
 							</TableCell>
 							<TableCell>
 								<Select
-									onValueChange={(value) => updateStatusMutation.mutate({ id: order.id, status: value as OrderStatus })}
+									onValueChange={(value) =>
+										updateStatusMutation.mutate({
+											id: order.id,
+											status: value as OrderStatus,
+										})
+									}
 									value={order.status}
 								>
 									<SelectTrigger
@@ -100,7 +139,11 @@ export function OrdersTable({ statusFilter }: OrdersTableProps) {
 									</SelectTrigger>
 									<SelectContent>
 										{STATUS_OPTIONS.map((status) => (
-											<SelectItem className="capitalize" key={status} value={status}>
+											<SelectItem
+												className="capitalize"
+												key={status}
+												value={status}
+											>
 												{status}
 											</SelectItem>
 										))}

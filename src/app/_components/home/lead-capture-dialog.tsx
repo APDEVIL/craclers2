@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/trpc/react";
@@ -35,12 +41,15 @@ export function LeadCaptureDialog() {
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
+		<Dialog onOpenChange={handleOpenChange} open={open}>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle className="text-[#C8202F]">To know more about offers and discounts</DialogTitle>
+					<DialogTitle className="text-[#C8202F]">
+						To know more about offers and discounts
+					</DialogTitle>
 					<DialogDescription>
-						Leave your number and we&apos;ll let you know the moment a new discount goes live.
+						Leave your number and we&apos;ll let you know the moment a new
+						discount goes live.
 					</DialogDescription>
 				</DialogHeader>
 
@@ -53,25 +62,37 @@ export function LeadCaptureDialog() {
 				>
 					<div className="space-y-1.5">
 						<Label htmlFor="lead-name">Name</Label>
-						<Input id="lead-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name *" required />
+						<Input
+							id="lead-name"
+							onChange={(e) => setName(e.target.value)}
+							placeholder="Name *"
+							required
+							value={name}
+						/>
 					</div>
 					<div className="space-y-1.5">
 						<Label htmlFor="lead-mobile">Mobile number</Label>
 						<Input
 							id="lead-mobile"
-							value={mobile}
+							inputMode="tel"
 							onChange={(e) => setMobile(e.target.value)}
 							placeholder="Your phone number *"
-							inputMode="tel"
 							required
+							value={mobile}
 						/>
 					</div>
 
 					{submitMutation.error ? (
-						<p className="text-sm font-medium text-[#C8202F]">Something went wrong — please try again.</p>
+						<p className="font-medium text-[#C8202F] text-sm">
+							Something went wrong — please try again.
+						</p>
 					) : null}
 
-					<Button type="submit" disabled={submitMutation.isPending} className="w-full bg-[#14163A] font-semibold hover:bg-[#1f2257]">
+					<Button
+						className="w-full bg-[#14163A] font-semibold hover:bg-[#1f2257]"
+						disabled={submitMutation.isPending}
+						type="submit"
+					>
 						{submitMutation.isPending ? "Submitting…" : "Submit"}
 					</Button>
 				</form>

@@ -8,10 +8,17 @@ import { bankAccount, order, orderItem, siteSetting } from "@/server/db/schema";
 import { GUEST_SESSION_COOKIE } from "@/server/guest-session";
 import { OrderBillDocument } from "@/server/pdf/order-bill";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+	req: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	const { id } = await params;
 
-	const [found] = await db.select().from(order).where(eq(order.id, id)).limit(1);
+	const [found] = await db
+		.select()
+		.from(order)
+		.where(eq(order.id, id))
+		.limit(1);
 	if (!found) return new Response("Not found", { status: 404 });
 
 	const guestCookie = req.cookies.get(GUEST_SESSION_COOKIE)?.value;

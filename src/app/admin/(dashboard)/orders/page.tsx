@@ -21,11 +21,18 @@ export default function AdminOrdersPage() {
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="font-display font-extrabold text-2xl text-[#14163A]">Orders</h1>
-				<p className="text-[#14163A]/55 text-sm">Estimates submitted by customers, newest first.</p>
+				<h1 className="font-display font-extrabold text-2xl text-[#14163A]">
+					Orders
+				</h1>
+				<p className="text-[#14163A]/55 text-sm">
+					Estimates submitted by customers, newest first.
+				</p>
 			</div>
 
-			<Tabs value={filter} onValueChange={(value) => setFilter(value as StatusFilter)}>
+			<Tabs
+				onValueChange={(value) => setFilter(value as StatusFilter)}
+				value={filter}
+			>
 				<TabsList>
 					{TABS.map((tab) => (
 						<TabsTrigger key={tab.value} value={tab.value}>

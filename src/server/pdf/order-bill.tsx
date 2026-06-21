@@ -2,22 +2,52 @@ import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
 	page: { padding: 32, fontSize: 10, fontFamily: "Helvetica" },
-	header: { marginBottom: 16, borderBottom: 2, borderColor: "#1a1a40", paddingBottom: 8 },
+	header: {
+		marginBottom: 16,
+		borderBottom: 2,
+		borderColor: "#1a1a40",
+		paddingBottom: 8,
+	},
 	shopName: { fontSize: 18, fontWeight: 700, color: "#1a1a40" },
 	muted: { color: "#555", marginTop: 2 },
-	billRow: { flexDirection: "row", justifyContent: "space-between", marginVertical: 12 },
+	billRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		marginVertical: 12,
+	},
 	sectionTitle: { fontSize: 11, fontWeight: 700, marginBottom: 4 },
 	table: { marginTop: 8 },
-	tr: { flexDirection: "row", borderBottom: 1, borderColor: "#ddd", paddingVertical: 4 },
-	th: { fontWeight: 700, backgroundColor: "#1a1a40", color: "#fff", paddingVertical: 6 },
+	tr: {
+		flexDirection: "row",
+		borderBottom: 1,
+		borderColor: "#ddd",
+		paddingVertical: 4,
+	},
+	th: {
+		fontWeight: 700,
+		backgroundColor: "#1a1a40",
+		color: "#fff",
+		paddingVertical: 6,
+	},
 	cCode: { width: "8%", paddingHorizontal: 4 },
 	cName: { width: "42%", paddingHorizontal: 4 },
 	cQty: { width: "12%", textAlign: "right", paddingHorizontal: 4 },
 	cPrice: { width: "19%", textAlign: "right", paddingHorizontal: 4 },
 	cTotal: { width: "19%", textAlign: "right", paddingHorizontal: 4 },
 	totals: { marginTop: 12, alignSelf: "flex-end", width: "45%" },
-	totalRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 2 },
-	grandTotal: { fontWeight: 700, fontSize: 12, borderTop: 1, borderColor: "#1a1a40", paddingTop: 4, marginTop: 4 },
+	totalRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingVertical: 2,
+	},
+	grandTotal: {
+		fontWeight: 700,
+		fontSize: 12,
+		borderTop: 1,
+		borderColor: "#1a1a40",
+		paddingTop: 4,
+		marginTop: 4,
+	},
 	footer: { marginTop: 24, fontSize: 9, color: "#555" },
 });
 
@@ -42,7 +72,12 @@ export interface OrderBillData {
 	grandTotal: string;
 	items: OrderBillItem[];
 	shop: { name: string; address: string | null };
-	bankAccounts: { bankName: string; accountHolderName: string; accountNumber: string; ifscCode: string }[];
+	bankAccounts: {
+		bankName: string;
+		accountHolderName: string;
+		accountNumber: string;
+		ifscCode: string;
+	}[];
 }
 
 export function OrderBillDocument({ data }: { data: OrderBillData }) {
@@ -51,7 +86,9 @@ export function OrderBillDocument({ data }: { data: OrderBillData }) {
 			<Page size="A4" style={styles.page}>
 				<View style={styles.header}>
 					<Text style={styles.shopName}>{data.shop.name}</Text>
-					{data.shop.address ? <Text style={styles.muted}>{data.shop.address}</Text> : null}
+					{data.shop.address ? (
+						<Text style={styles.muted}>{data.shop.address}</Text>
+					) : null}
 				</View>
 
 				<View style={styles.billRow}>
@@ -64,7 +101,9 @@ export function OrderBillDocument({ data }: { data: OrderBillData }) {
 					</View>
 					<View>
 						<Text style={styles.sectionTitle}>Bill No: {data.billNumber}</Text>
-						<Text style={styles.muted}>Date: {data.createdAt.toLocaleDateString("en-IN")}</Text>
+						<Text style={styles.muted}>
+							Date: {data.createdAt.toLocaleDateString("en-IN")}
+						</Text>
 					</View>
 				</View>
 
@@ -77,7 +116,7 @@ export function OrderBillDocument({ data }: { data: OrderBillData }) {
 						<Text style={styles.cTotal}>Total</Text>
 					</View>
 					{data.items.map((item) => (
-						<View style={styles.tr} key={item.productCode}>
+						<View key={item.productCode} style={styles.tr}>
 							<Text style={styles.cCode}>{item.productCode}</Text>
 							<Text style={styles.cName}>
 								{item.productName} ({item.unit})
@@ -109,7 +148,8 @@ export function OrderBillDocument({ data }: { data: OrderBillData }) {
 						<Text style={styles.sectionTitle}>Payment Details</Text>
 						{data.bankAccounts.map((acc) => (
 							<Text key={acc.accountNumber}>
-								{acc.bankName} — {acc.accountHolderName} — A/C {acc.accountNumber} — IFSC {acc.ifscCode}
+								{acc.bankName} — {acc.accountHolderName} — A/C{" "}
+								{acc.accountNumber} — IFSC {acc.ifscCode}
 							</Text>
 						))}
 					</View>

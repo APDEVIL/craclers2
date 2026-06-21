@@ -2,24 +2,45 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UploadButton } from "@/lib/uploadthing";
 import { api } from "@/trpc/react";
 
 const slugify = (value: string) =>
-	value.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-");
+	value
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-z0-9\s-]/g, "")
+		.replace(/\s+/g, "-");
 
 const categoryFormSchema = z.object({
 	name: z.string().min(1, "Enter a category name").max(120),
-	slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only"),
+	slug: z
+		.string()
+		.min(1, "Slug is required")
+		.regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only"),
 	discountLabel: z.string().max(60).optional().or(z.literal("")),
 	imageUrl: z.string().url().optional().or(z.literal("")),
 	sortOrder: z.coerce.number().int(),
@@ -56,7 +77,12 @@ function defaultsFor(category?: CategoryFormCategory): CategoryFormValues {
 	};
 }
 
-export function CategoryFormDialog({ open, onOpenChange, category, onSaved }: CategoryFormDialogProps) {
+export function CategoryFormDialog({
+	open,
+	onOpenChange,
+	category,
+	onSaved,
+}: CategoryFormDialogProps) {
 	const isEditing = Boolean(category);
 	const [slugTouched, setSlugTouched] = useState(isEditing);
 
@@ -92,7 +118,11 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSaved }: Ca
 	const mutation = isEditing ? updateMutation : createMutation;
 
 	const onSubmit = (values: CategoryFormValues) => {
-		const payload = { ...values, discountLabel: values.discountLabel || undefined, imageUrl: values.imageUrl || undefined };
+		const payload = {
+			...values,
+			discountLabel: values.discountLabel || undefined,
+			imageUrl: values.imageUrl || undefined,
+		};
 		if (isEditing && category) {
 			updateMutation.mutate({ id: category.id, ...payload });
 		} else {
@@ -101,14 +131,16 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSaved }: Ca
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog onOpenChange={onOpenChange} open={open}>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle>{isEditing ? "Edit category" : "Add category"}</DialogTitle>
+					<DialogTitle>
+						{isEditing ? "Edit category" : "Add category"}
+					</DialogTitle>
 				</DialogHeader>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+					<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
 							control={form.control}
 							name="name"
@@ -121,7 +153,8 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSaved }: Ca
 											{...field}
 											onChange={(e) => {
 												field.onChange(e);
-												if (!slugTouched) form.setValue("slug", slugify(e.target.value));
+												if (!slugTouched)
+													form.setValue("slug", slugify(e.target.value));
 											}}
 										/>
 									</FormControl>
@@ -172,18 +205,26 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSaved }: Ca
 								<FormItem>
 									<FormLabel>Category icon</FormLabel>
 									<div className="flex items-center gap-3">
+										{/* Replace the existing <img /> inside your imageUrl FormField with this: */}
 										{field.value ? (
-											<img src={field.value} alt="" className="h-10 w-10 rounded-md border object-contain" />
+											<Image
+												alt="Product image"
+												className="h-12 w-12 rounded-md border object-cover"
+												height={48}
+												src={field.value}
+												width={48}
+											/>
 										) : null}
 										<UploadButton
+											appearance={{
+												button:
+													"bg-[#14163A] text-white text-xs px-3 py-1.5 rounded-md",
+												allowedContent: "hidden",
+											}}
 											endpoint="categoryImage"
 											onClientUploadComplete={(res) => {
 												const url = res[0]?.url;
 												if (url) field.onChange(url);
-											}}
-											appearance={{
-												button: "bg-[#14163A] text-white text-xs px-3 py-1.5 rounded-md",
-												allowedContent: "hidden",
 											}}
 										/>
 									</div>
@@ -212,19 +253,38 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSaved }: Ca
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-end gap-2 pb-1.5">
 										<FormControl>
-											<Checkbox checked={field.value} onCheckedChange={field.onChange} />
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
 										</FormControl>
-										<FormLabel className="!mt-0">Visible to customers</FormLabel>
+										<FormLabel className="!mt-0">
+											Visible to customers
+										</FormLabel>
 									</FormItem>
 								)}
 							/>
 						</div>
 
-						{mutation.error ? <p className="font-medium text-[#C8202F] text-sm">{mutation.error.message}</p> : null}
+						{mutation.error ? (
+							<p className="font-medium text-[#C8202F] text-sm">
+								{mutation.error.message}
+							</p>
+						) : null}
 
 						<DialogFooter>
-							<Button type="submit" disabled={mutation.isPending} className="bg-[#14163A] hover:bg-[#1f2257]">
-								{mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isEditing ? "Save changes" : "Add category"}
+							<Button
+								className="bg-[#14163A] hover:bg-[#1f2257]"
+								disabled={mutation.isPending}
+								type="submit"
+							>
+								{mutation.isPending ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : isEditing ? (
+									"Save changes"
+								) : (
+									"Add category"
+								)}
 							</Button>
 						</DialogFooter>
 					</form>

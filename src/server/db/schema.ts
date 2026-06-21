@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
 	boolean,
 	index,
@@ -105,15 +105,21 @@ export const orderBillSeq = pgSequence("cracker_order_bill_seq", {
 
 // src/server/db/schema.ts — patch category:
 export const category = createTable("category", {
-	id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull(),
 	slug: text("slug").notNull().unique(),
 	discountLabel: text("discount_label"),
 	imageUrl: text("image_url"),
 	sortOrder: integer("sort_order").notNull().default(0),
 	isActive: boolean("is_active").notNull().default(true),
-	createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-	updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+	createdAt: timestamp("created_at", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp("updated_at", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
 });
 
 export const product = createTable(
@@ -197,10 +203,9 @@ export const order = createTable("order", {
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	billNumber: text("bill_number").notNull().unique(),
-	guestSessionId: text("guest_session_id").references(
-		() => guestSession.id,
-		{ onDelete: "set null" },
-	),
+	guestSessionId: text("guest_session_id").references(() => guestSession.id, {
+		onDelete: "set null",
+	}),
 	customerName: text("customer_name").notNull(),
 	customerWhatsapp: text("customer_whatsapp").notNull(),
 	customerAddress: text("customer_address").notNull(),
@@ -267,12 +272,19 @@ export const siteSetting = createTable("site_setting", {
 	shopAddress: text("shop_address"),
 	contactEmail: text("contact_email"),
 	announcementText: text("announcement_text"),
-	minimumOrderAmount: numeric("minimum_order_amount", { precision: 10, scale: 2 }).notNull().default("0"),
+	minimumOrderAmount: numeric("minimum_order_amount", {
+		precision: 10,
+		scale: 2,
+	})
+		.notNull()
+		.default("0"),
 	whatsappNumber: text("whatsapp_number"),
 	contactPhonePrimary: text("contact_phone_primary"),
 	contactPhoneSecondary: text("contact_phone_secondary"),
 	address: text("address"),
-	updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+	updatedAt: timestamp("updated_at", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
 });
 
 // ---------------- relations ----------------
@@ -322,9 +334,13 @@ export const orderItemRelations = relations(orderItem, ({ one }) => ({
 }));
 
 export const lead = createTable("lead", {
-	id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull(),
 	mobile: text("mobile").notNull(),
 	source: text("source"), // "home_popup" | "contact_page"
-	createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	createdAt: timestamp("created_at", { withTimezone: true })
+		.notNull()
+		.defaultNow(),
 });

@@ -25,15 +25,25 @@ export function BankAccountCard({ account }: { account: BankAccountCardData }) {
 
 			<dl className="mt-5 space-y-3 text-sm">
 				<Row label="Account holder" value={account.accountHolderName} />
-				<Row label="Account number" value={account.accountNumber} copyable />
-				<Row label="IFSC code" value={account.ifscCode} copyable />
-				{account.branchName ? <Row label="Branch" value={account.branchName} /> : null}
+				<Row copyable label="Account number" value={account.accountNumber} />
+				<Row copyable label="IFSC code" value={account.ifscCode} />
+				{account.branchName ? (
+					<Row label="Branch" value={account.branchName} />
+				) : null}
 			</dl>
 		</div>
 	);
 }
 
-function Row({ label, value, copyable }: { label: string; value: string; copyable?: boolean }) {
+function Row({
+	label,
+	value,
+	copyable,
+}: {
+	label: string;
+	value: string;
+	copyable?: boolean;
+}) {
 	const [copied, setCopied] = useState(false);
 
 	const handleCopy = async () => {
@@ -45,12 +55,23 @@ function Row({ label, value, copyable }: { label: string; value: string; copyabl
 	return (
 		<div className="flex items-center justify-between gap-3">
 			<div>
-				<dt className="text-[#14163A]/45 text-xs uppercase tracking-wide">{label}</dt>
+				<dt className="text-[#14163A]/45 text-xs uppercase tracking-wide">
+					{label}
+				</dt>
 				<dd className="font-semibold text-[#14163A]">{value}</dd>
 			</div>
 			{copyable ? (
-				<Button size="icon" variant="ghost" onClick={handleCopy} aria-label={`Copy ${label}`}>
-					{copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4 text-[#14163A]/50" />}
+				<Button
+					aria-label={`Copy ${label}`}
+					onClick={handleCopy}
+					size="icon"
+					variant="ghost"
+				>
+					{copied ? (
+						<Check className="h-4 w-4 text-emerald-500" />
+					) : (
+						<Copy className="h-4 w-4 text-[#14163A]/50" />
+					)}
 				</Button>
 			) : null}
 		</div>

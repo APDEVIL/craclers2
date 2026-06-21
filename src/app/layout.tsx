@@ -28,31 +28,35 @@ export const metadata: Metadata = {
 		"Wholesale Sivakasi crackers at manufacturer-direct prices. Build your estimate online and we'll confirm your order over a phone call.",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const settings = await api.settings.get();
 
 	return (
-		<html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`}>
+		<html className={`${displayFont.variable} ${bodyFont.variable}`} lang="en">
 			<body className="flex min-h-screen flex-col font-sans antialiased">
 				<TRPCReactProvider>
 					<AnnouncementBar text={settings.announcementText ?? ""} />
 					<SiteHeader
-						shopName={settings.shopName}
 						address={settings.address}
-						mail={settings.contactEmail}
 						contactPhonePrimary={settings.contactPhonePrimary}
 						contactPhoneSecondary={settings.contactPhoneSecondary}
+						mail={settings.contactEmail}
+						shopName={settings.shopName}
 					/>
 					<main className="flex-1">{children}</main>
 					<SiteFooter
-						shopName={settings.shopName}
-						shopAddress={settings.shopAddress}
-						mail={settings.contactEmail}
 						contactPhonePrimary={settings.contactPhonePrimary}
 						contactPhoneSecondary={settings.contactPhoneSecondary}
+						mail={settings.contactEmail}
+						shopAddress={settings.shopAddress}
+						shopName={settings.shopName}
 					/>
 					<FloatingActions whatsappNumber={settings.whatsappNumber} />
-					<Toaster richColors position="top-center" />
+					<Toaster position="top-center" richColors />
 				</TRPCReactProvider>
 			</body>
 		</html>

@@ -10,11 +10,11 @@ export function AnnouncementBar({ text, className }: AnnouncementBarProps) {
 
 	return (
 		<div
-			role="status"
 			className={cn(
 				"relative overflow-hidden bg-[#C8202F] py-2 text-white",
 				className,
 			)}
+			role="status"
 		>
 			<style>{`
 				@keyframes ss-marquee {

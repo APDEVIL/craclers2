@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
+import {
+	Carousel,
+	type CarouselApi,
+	CarouselContent,
+	CarouselItem,
+} from "@/components/ui/carousel";
 
 interface Slide {
 	eyebrow: string;
@@ -16,13 +21,15 @@ const SLIDES: Slide[] = [
 	{
 		eyebrow: "Diwali specials",
 		headline: "Light up your Diwali with SS Crackers Shop",
-		subhead: "Sivakasi-manufactured crackers at honest, manufacturer-direct prices.",
+		subhead:
+			"Sivakasi-manufactured crackers at honest, manufacturer-direct prices.",
 		tone: "gold",
 	},
 	{
 		eyebrow: "Gift boxes",
 		headline: "Curated gift boxes for every budget",
-		subhead: "From starter packs to family-sized hampers — all in one estimate.",
+		subhead:
+			"From starter packs to family-sized hampers — all in one estimate.",
 		tone: "red",
 	},
 	{
@@ -44,18 +51,22 @@ export function HeroCarousel() {
 
 	useEffect(() => {
 		if (!api) return;
-		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const prefersReducedMotion = window.matchMedia(
+			"(prefers-reduced-motion: reduce)",
+		).matches;
 		if (prefersReducedMotion) return;
 		const interval = setInterval(() => api.scrollNext(), 5500);
 		return () => clearInterval(interval);
 	}, [api]);
 
 	return (
-		<Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
+		<Carousel className="w-full" opts={{ loop: true }} setApi={setApi}>
 			<CarouselContent>
 				{SLIDES.map((slide) => (
 					<CarouselItem key={slide.headline}>
-						<div className={`relative flex min-h-[420px] items-center overflow-hidden ${TONE_BG[slide.tone]} px-6 py-16 sm:px-12`}>
+						<div
+							className={`relative flex min-h-[420px] items-center overflow-hidden ${TONE_BG[slide.tone]} px-6 py-16 sm:px-12`}
+						>
 							<BurstDecoration />
 							<div className="relative z-10 max-w-xl space-y-5">
 								<span className="inline-block rounded-full bg-white/15 px-4 py-1 font-bold text-white text-xs uppercase tracking-wider">
@@ -64,12 +75,23 @@ export function HeroCarousel() {
 								<h1 className="font-extrabold text-3xl text-white leading-tight sm:text-5xl">
 									{slide.headline}
 								</h1>
-								<p className="text-base text-white/85 sm:text-lg">{slide.subhead}</p>
+								<p className="text-base text-white/85 sm:text-lg">
+									{slide.subhead}
+								</p>
 								<div className="flex flex-wrap gap-3 pt-2">
-									<Button asChild size="lg" className="rounded-full bg-white font-bold text-[#14163A] hover:bg-white/90">
+									<Button
+										asChild
+										className="rounded-full bg-white font-bold text-[#14163A] hover:bg-white/90"
+										size="lg"
+									>
 										<Link href="/estimate">Estimate now</Link>
 									</Button>
-									<Button asChild size="lg" variant="outline" className="rounded-full border-white/60 bg-transparent font-bold text-white hover:bg-white/10">
+									<Button
+										asChild
+										className="rounded-full border-white/60 bg-transparent font-bold text-white hover:bg-white/10"
+										size="lg"
+										variant="outline"
+									>
 										<Link href="/estimate#price-list">View price list</Link>
 									</Button>
 								</div>
@@ -111,7 +133,7 @@ function BurstDecoration() {
 					y2={line.y2}
 				/>
 			))}
-			<circle cx="100" cy="100" r="22" fill="white" />
+			<circle cx="100" cy="100" fill="white" r="22" />
 		</svg>
 	);
 }

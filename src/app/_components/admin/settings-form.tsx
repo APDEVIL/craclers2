@@ -8,7 +8,14 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
@@ -50,7 +57,8 @@ export function SettingsForm() {
 		onSuccess: () => void utils.settings.get.invalidate(),
 	});
 
-	if (isLoading) return <div className="h-96 animate-pulse rounded-lg bg-[#14163A]/5" />;
+	if (isLoading)
+		return <div className="h-96 animate-pulse rounded-lg bg-[#14163A]/5" />;
 
 	return (
 		<div className="space-y-8">
@@ -60,44 +68,144 @@ export function SettingsForm() {
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
-						<form onSubmit={form.handleSubmit((values) => updateMutation.mutate(values))} className="space-y-4">
+						<form
+							className="space-y-4"
+							onSubmit={form.handleSubmit((values) =>
+								updateMutation.mutate(values),
+							)}
+						>
 							<div className="grid grid-cols-2 gap-4">
-								<FormField control={form.control} name="shopName" render={({ field }) => (
-									<FormItem><FormLabel>Shop name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-								)} />
-								<FormField control={form.control} name="minimumOrderAmount" render={({ field }) => (
-									<FormItem><FormLabel>Minimum order amount (₹)</FormLabel><FormControl><Input type="number" step="0.01" {...field} /></FormControl><FormMessage /></FormItem>
-								)} />
+								<FormField
+									control={form.control}
+									name="shopName"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Shop name</FormLabel>
+											<FormControl>
+												<Input {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="minimumOrderAmount"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Minimum order amount (₹)</FormLabel>
+											<FormControl>
+												<Input step="0.01" type="number" {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 							</div>
 
-							<FormField control={form.control} name="shopAddress" render={({ field }) => (
-								<FormItem><FormLabel>Shop address (shown on bills)</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
+							<FormField
+								control={form.control}
+								name="shopAddress"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Shop address (shown on bills)</FormLabel>
+										<FormControl>
+											<Textarea rows={2} {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-							<FormField control={form.control} name="announcementText" render={({ field }) => (
-								<FormItem><FormLabel>Announcement bar text</FormLabel><FormControl><Input placeholder="Welcome to SS Crackers Shop — 80% discount live!" {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
+							<FormField
+								control={form.control}
+								name="announcementText"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Announcement bar text</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="Welcome to SS Crackers Shop — 80% discount live!"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
 							<div className="grid grid-cols-3 gap-4">
-								<FormField control={form.control} name="whatsappNumber" render={({ field }) => (
-									<FormItem><FormLabel>WhatsApp number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-								)} />
-								<FormField control={form.control} name="contactPhonePrimary" render={({ field }) => (
-									<FormItem><FormLabel>Phone 1</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-								)} />
-								<FormField control={form.control} name="contactPhoneSecondary" render={({ field }) => (
-									<FormItem><FormLabel>Phone 2</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-								)} />
+								<FormField
+									control={form.control}
+									name="whatsappNumber"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>WhatsApp number</FormLabel>
+											<FormControl>
+												<Input {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="contactPhonePrimary"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Phone 1</FormLabel>
+											<FormControl>
+												<Input {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="contactPhoneSecondary"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Phone 2</FormLabel>
+											<FormControl>
+												<Input {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 							</div>
 
-							<FormField control={form.control} name="address" render={({ field }) => (
-								<FormItem><FormLabel>Footer address</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
+							<FormField
+								control={form.control}
+								name="address"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Footer address</FormLabel>
+										<FormControl>
+											<Textarea rows={2} {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-							{updateMutation.error ? <p className="text-sm font-medium text-[#C8202F]">{updateMutation.error.message}</p> : null}
+							{updateMutation.error ? (
+								<p className="font-medium text-[#C8202F] text-sm">
+									{updateMutation.error.message}
+								</p>
+							) : null}
 
-							<Button type="submit" disabled={updateMutation.isPending} className="bg-[#14163A] hover:bg-[#1f2257]">
-								{updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save settings"}
+							<Button
+								className="bg-[#14163A] hover:bg-[#1f2257]"
+								disabled={updateMutation.isPending}
+								type="submit"
+							>
+								{updateMutation.isPending ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : (
+									"Save settings"
+								)}
 							</Button>
 						</form>
 					</Form>
@@ -126,7 +234,13 @@ function BankAccountsManager() {
 
 	const form = useForm<BankAccountValues>({
 		resolver: zodResolver(bankAccountSchema),
-		defaultValues: { bankName: "", accountHolderName: "", accountNumber: "", ifscCode: "", branchName: "" },
+		defaultValues: {
+			bankName: "",
+			accountHolderName: "",
+			accountNumber: "",
+			ifscCode: "",
+			branchName: "",
+		},
 	});
 
 	const createMutation = api.bankAccount.create.useMutation({
@@ -146,7 +260,12 @@ function BankAccountsManager() {
 			<CardHeader className="flex flex-row items-center justify-between">
 				<CardTitle>Bank accounts</CardTitle>
 				{!adding ? (
-					<Button size="sm" variant="outline" onClick={() => setAdding(true)} className="gap-1.5">
+					<Button
+						className="gap-1.5"
+						onClick={() => setAdding(true)}
+						size="sm"
+						variant="outline"
+					>
 						<Plus className="h-4 w-4" />
 						Add account
 					</Button>
@@ -154,14 +273,23 @@ function BankAccountsManager() {
 			</CardHeader>
 			<CardContent className="space-y-3">
 				{accounts.map((account) => (
-					<div key={account.id} className="flex items-center justify-between gap-4 rounded-md border border-[#14163A]/10 px-4 py-3">
+					<div
+						className="flex items-center justify-between gap-4 rounded-md border border-[#14163A]/10 px-4 py-3"
+						key={account.id}
+					>
 						<div className="text-sm">
 							<p className="font-semibold text-[#14163A]">{account.bankName}</p>
 							<p className="text-[#14163A]/60">
-								{account.accountHolderName} · A/C {account.accountNumber} · IFSC {account.ifscCode}
+								{account.accountHolderName} · A/C {account.accountNumber} · IFSC{" "}
+								{account.ifscCode}
 							</p>
 						</div>
-						<Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate({ id: account.id })} aria-label="Delete bank account">
+						<Button
+							aria-label="Delete bank account"
+							onClick={() => deleteMutation.mutate({ id: account.id })}
+							size="icon"
+							variant="ghost"
+						>
 							<Trash2 className="h-4 w-4 text-[#C8202F]" />
 						</Button>
 					</div>
@@ -170,29 +298,91 @@ function BankAccountsManager() {
 				{adding ? (
 					<Form {...form}>
 						<form
-							onSubmit={form.handleSubmit((values) => createMutation.mutate(values))}
-							className="grid grid-cols-2 gap-3 rounded-md border border-dashed border-[#14163A]/20 p-4"
+							className="grid grid-cols-2 gap-3 rounded-md border border-[#14163A]/20 border-dashed p-4"
+							onSubmit={form.handleSubmit((values) =>
+								createMutation.mutate(values),
+							)}
 						>
-							<FormField control={form.control} name="bankName" render={({ field }) => (
-								<FormItem><FormLabel>Bank name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
-							<FormField control={form.control} name="accountHolderName" render={({ field }) => (
-								<FormItem><FormLabel>Account holder</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
-							<FormField control={form.control} name="accountNumber" render={({ field }) => (
-								<FormItem><FormLabel>Account number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
-							<FormField control={form.control} name="ifscCode" render={({ field }) => (
-								<FormItem><FormLabel>IFSC code</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
-							<FormField control={form.control} name="branchName" render={({ field }) => (
-								<FormItem className="col-span-2"><FormLabel>Branch (optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-							)} />
+							<FormField
+								control={form.control}
+								name="bankName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Bank name</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="accountHolderName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Account holder</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="accountNumber"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Account number</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="ifscCode"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>IFSC code</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="branchName"
+								render={({ field }) => (
+									<FormItem className="col-span-2">
+										<FormLabel>Branch (optional)</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 							<div className="col-span-2 flex gap-2">
-								<Button type="submit" size="sm" disabled={createMutation.isPending} className="bg-[#14163A] hover:bg-[#1f2257]">
+								<Button
+									className="bg-[#14163A] hover:bg-[#1f2257]"
+									disabled={createMutation.isPending}
+									size="sm"
+									type="submit"
+								>
 									Save account
 								</Button>
-								<Button type="button" size="sm" variant="ghost" onClick={() => setAdding(false)}>
+								<Button
+									onClick={() => setAdding(false)}
+									size="sm"
+									type="button"
+									variant="ghost"
+								>
 									Cancel
 								</Button>
 							</div>

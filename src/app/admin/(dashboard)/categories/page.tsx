@@ -5,7 +5,10 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { CategoryFormDialog, type CategoryFormCategory } from "@/app/_components/admin/category-form-dialog";
+import {
+	type CategoryFormCategory,
+	CategoryFormDialog,
+} from "@/app/_components/admin/category-form-dialog";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -19,16 +22,31 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { api } from "@/trpc/react";
 
-const SKELETON_ROWS = ["skeleton-1", "skeleton-2", "skeleton-3", "skeleton-4"] as const;
+const SKELETON_ROWS = [
+	"skeleton-1",
+	"skeleton-2",
+	"skeleton-3",
+	"skeleton-4",
+] as const;
 
 export default function AdminCategoriesPage() {
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [editingCategory, setEditingCategory] = useState<CategoryFormCategory | undefined>(undefined);
+	const [editingCategory, setEditingCategory] = useState<
+		CategoryFormCategory | undefined
+	>(undefined);
 
-	const { data: categories = [], isLoading } = api.category.adminList.useQuery();
+	const { data: categories = [], isLoading } =
+		api.category.adminList.useQuery();
 
 	const utils = api.useUtils();
 	const updateMutation = api.category.update.useMutation({
@@ -57,10 +75,17 @@ export default function AdminCategoriesPage() {
 		<div className="space-y-6">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<div>
-					<h1 className="font-display font-extrabold text-2xl text-[#14163A]">Categories</h1>
-					<p className="text-[#14163A]/55 text-sm">{categories.length} category(ies)</p>
+					<h1 className="font-display font-extrabold text-2xl text-[#14163A]">
+						Categories
+					</h1>
+					<p className="text-[#14163A]/55 text-sm">
+						{categories.length} category(ies)
+					</p>
 				</div>
-				<Button className="gap-2 bg-[#14163A] hover:bg-[#1f2257]" onClick={openCreate}>
+				<Button
+					className="gap-2 bg-[#14163A] hover:bg-[#1f2257]"
+					onClick={openCreate}
+				>
 					<Plus className="h-4 w-4" />
 					Add category
 				</Button>
@@ -69,13 +94,18 @@ export default function AdminCategoriesPage() {
 			{isLoading ? (
 				<div className="space-y-2">
 					{SKELETON_ROWS.map((rowKey) => (
-						<div className="h-12 animate-pulse rounded-md bg-[#14163A]/5" key={rowKey} />
+						<div
+							className="h-12 animate-pulse rounded-md bg-[#14163A]/5"
+							key={rowKey}
+						/>
 					))}
 				</div>
 			) : categories.length === 0 ? (
 				<div className="rounded-lg border border-[#14163A]/15 border-dashed py-16 text-center">
 					<p className="font-semibold text-[#14163A]">No categories yet</p>
-					<p className="text-[#14163A]/55 text-sm">Create a category before adding products.</p>
+					<p className="text-[#14163A]/55 text-sm">
+						Create a category before adding products.
+					</p>
 				</div>
 			) : (
 				<div className="overflow-x-auto rounded-lg border border-[#14163A]/10 bg-white">
@@ -107,39 +137,66 @@ export default function AdminCategoriesPage() {
 											) : null}
 										</div>
 									</TableCell>
-									<TableCell className="font-semibold text-[#14163A]">{category.name}</TableCell>
-									<TableCell className="text-[#14163A]/60">{category.slug}</TableCell>
-									<TableCell className="text-[#14163A]/60">{category.discountLabel ?? "—"}</TableCell>
-									<TableCell className="text-[#14163A]/60">{category.sortOrder}</TableCell>
+									<TableCell className="font-semibold text-[#14163A]">
+										{category.name}
+									</TableCell>
+									<TableCell className="text-[#14163A]/60">
+										{category.slug}
+									</TableCell>
+									<TableCell className="text-[#14163A]/60">
+										{category.discountLabel ?? "—"}
+									</TableCell>
+									<TableCell className="text-[#14163A]/60">
+										{category.sortOrder}
+									</TableCell>
 									<TableCell>
 										<Switch
 											checked={category.isActive}
-											onCheckedChange={(checked) => updateMutation.mutate({ id: category.id, isActive: checked })}
+											onCheckedChange={(checked) =>
+												updateMutation.mutate({
+													id: category.id,
+													isActive: checked,
+												})
+											}
 										/>
 									</TableCell>
 									<TableCell className="text-right">
 										<div className="flex justify-end gap-1">
-											<Button aria-label="Edit category" onClick={() => openEdit(category)} size="icon" variant="ghost">
+											<Button
+												aria-label="Edit category"
+												onClick={() => openEdit(category)}
+												size="icon"
+												variant="ghost"
+											>
 												<Pencil className="h-4 w-4 text-[#14163A]/60" />
 											</Button>
 											<AlertDialog>
 												<AlertDialogTrigger asChild>
-													<Button aria-label="Delete category" size="icon" variant="ghost">
+													<Button
+														aria-label="Delete category"
+														size="icon"
+														variant="ghost"
+													>
 														<Trash2 className="h-4 w-4 text-[#C8202F]" />
 													</Button>
 												</AlertDialogTrigger>
 												<AlertDialogContent>
 													<AlertDialogHeader>
-														<AlertDialogTitle>Delete &ldquo;{category.name}&rdquo;?</AlertDialogTitle>
+														<AlertDialogTitle>
+															Delete &ldquo;{category.name}&rdquo;?
+														</AlertDialogTitle>
 														<AlertDialogDescription>
-															Categories with existing products can&apos;t be deleted — move or delete those products first.
+															Categories with existing products can&apos;t be
+															deleted — move or delete those products first.
 														</AlertDialogDescription>
 													</AlertDialogHeader>
 													<AlertDialogFooter>
 														<AlertDialogCancel>Cancel</AlertDialogCancel>
 														<AlertDialogAction
 															className="bg-[#C8202F] hover:bg-[#a81b27]"
-															onClick={() => deleteMutation.mutate({ id: category.id })}
+															onClick={() =>
+																deleteMutation.mutate({ id: category.id })
+															}
 														>
 															Delete
 														</AlertDialogAction>
@@ -155,7 +212,11 @@ export default function AdminCategoriesPage() {
 				</div>
 			)}
 
-			<CategoryFormDialog category={editingCategory} onOpenChange={setDialogOpen} open={dialogOpen} />
+			<CategoryFormDialog
+				category={editingCategory}
+				onOpenChange={setDialogOpen}
+				open={dialogOpen}
+			/>
 		</div>
 	);
 }
