@@ -1,0 +1,102 @@
+"use client";
+
+import { ShoppingCart } from "lucide-react";
+
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useCart } from "@/hooks/use-cart";
+import { cn } from "@/lib/utils";
+
+export interface CategoryOption {
+	id: string;
+	name: string;
+}
+
+interface CategoryFilterBarProps {
+	categories: CategoryOption[];
+	categoryId: string | null;
+	onCategoryChange: (categoryId: string | null) => void;
+	search: string;
+	onSearchChange: (search: string) => void;
+	onCartClick: () => void;
+}
+
+export function CategoryFilterBar({
+	categories,
+	categoryId,
+	onCategoryChange,
+	search,
+	onSearchChange,
+	onCartClick,
+}: CategoryFilterBarProps) {
+	const cart = useCart();
+
+	return (
+		<div className="sticky top-2 z-20 flex flex-col gap-3 rounded-lg bg-[#14163A] p-4 text-white shadow-md sm:flex-row sm:items-center sm:justify-between">
+			<div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
+				<Select
+					value={categoryId ?? "all"}
+					onValueChange={(value) => onCategoryChange(value === "all" ? null : value)}
+				>
+					<SelectTrigger className="w-full bg-white text-[#14163A] sm:w-56">
+						<SelectValue placeholder="Select category" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="all">All categories</SelectItem>
+						{categories.map((category) => (
+							<SelectItem key={category.id} value={category.id}>
+								{category.name}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+
+				<Input
+					value={search}
+					onChange={(e) => onSearchChange(e.target.value)}
+					placeholder="Search here…"
+					className="w-full bg-white text-[#14163A] sm:w-64"
+				/>
+			</div>
+
+			<div className="flex items-center justify-between gap-6 text-sm sm:justify-end">
+				<div className="flex gap-5">
+					<Stat label="Net total" value={cart.netTotal} />
+					<Stat label="You save" value={cart.youSave} accent />
+					<Stat label="Total" value={cart.grandTotal} bold />
+				</div>
+
+				<button
+					type="button"
+					onClick={onCartClick}
+					aria-label="View cart"
+					className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D9A640] text-[#14163A] transition hover:scale-105"
+				>
+					<ShoppingCart className="h-5 w-5" />
+					{cart.itemCount > 0 ? (
+						<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#C8202F] font-bold text-[11px] text-white">
+							{cart.itemCount}
+						</span>
+					) : null}
+				</button>
+			</div>
+		</div>
+	);
+}
+
+function Stat({ label, value, accent, bold }: { label: string; value: number; accent?: boolean; bold?: boolean }) {
+	return (
+		<div className="hidden flex-col leading-tight sm:flex">
+			<span className="text-[11px] text-white/55 uppercase tracking-wide">{label}</span>
+			<span
+				className={cn(
+					"text-base",
+					bold ? "font-extrabold text-[#D9A640]" : "font-semibold",
+					accent ? "text-emerald-400" : "text-white",
+				)}
+			>
+				₹{value.toFixed(2)}
+			</span>
+		</div>
+	);
+}

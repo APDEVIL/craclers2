@@ -1,0 +1,121 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+	--radius: 0.75rem;
+
+	--background: #ffffff;
+	--foreground: #14163a;
+
+	--card: #ffffff;
+	--card-foreground: #14163a;
+
+	--popover: #ffffff;
+	--popover-foreground: #14163a;
+
+	--primary: #14163a;
+	--primary-foreground: #ffffff;
+
+	--secondary: #fbeed1;
+	--secondary-foreground: #14163a;
+
+	--muted: #f3f3f8;
+	--muted-foreground: #6b6d85;
+
+	--accent: #d9a640;
+	--accent-foreground: #14163a;
+
+	--destructive: #c8202f;
+	--destructive-foreground: #ffffff;
+
+	--border: #e6e6ee;
+	--input: #e6e6ee;
+	--ring: #d9a640;
+
+	--chart-1: #14163a;
+	--chart-2: #d9a640;
+	--chart-3: #c8202f;
+	--chart-4: #6b6d85;
+	--chart-5: #25d366;
+
+	/* brand tokens — reach for these directly when Tailwind's semantic
+	   colors above don't fit (e.g. the WhatsApp button, marquee bar) */
+	--brand-navy: #14163a;
+	--brand-gold: #d9a640;
+	--brand-red: #c8202f;
+	--brand-whatsapp: #25d366;
+}
+
+.dark {
+	--background: #0f1129;
+	--foreground: #f3f3f8;
+	--card: #14163a;
+	--card-foreground: #f3f3f8;
+	--popover: #14163a;
+	--popover-foreground: #f3f3f8;
+	--primary: #d9a640;
+	--primary-foreground: #14163a;
+	--secondary: #1f2257;
+	--secondary-foreground: #f3f3f8;
+	--muted: #1f2257;
+	--muted-foreground: #a3a5c2;
+	--accent: #d9a640;
+	--accent-foreground: #14163a;
+	--destructive: #e0394a;
+	--destructive-foreground: #ffffff;
+	--border: #2a2d63;
+	--input: #2a2d63;
+	--ring: #d9a640;
+}
+
+@theme inline {
+	--font-sans: var(--font-sans);
+	--font-display: var(--font-display);
+
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+	}
+
+	body {
+		@apply bg-background text-foreground;
+	}
+}

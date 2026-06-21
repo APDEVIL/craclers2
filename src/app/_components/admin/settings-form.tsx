@@ -1,0 +1,205 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { api } from "@/trpc/react";
+
+const settingsFormSchema = z.object({
+	shopName: z.string().min(1).max(150),
+	shopAddress: z.string().max(500).optional().or(z.literal("")),
+	announcementText: z.string().max(300).optional().or(z.literal("")),
+	minimumOrderAmount: z.coerce.number().nonnegative(),
+	whatsappNumber: z.string().max(20).optional().or(z.literal("")),
+	contactPhonePrimary: z.string().max(20).optional().or(z.literal("")),
+	contactPhoneSecondary: z.string().max(20).optional().or(z.literal("")),
+	address: z.string().max(500).optional().or(z.literal("")),
+});
+
+type SettingsFormValues = z.infer<typeof settingsFormSchema>;
+
+export function SettingsForm() {
+	const utils = api.useUtils();
+	const { data: settings, isLoading } = api.settings.get.useQuery();
+
+	const form = useForm<SettingsFormValues>({
+		resolver: zodResolver(settingsFormSchema),
+		values: settings
+			? {
+					shopName: settings.shopName,
+					shopAddress: settings.shopAddress ?? "",
+					announcementText: settings.announcementText ?? "",
+					minimumOrderAmount: Number(settings.minimumOrderAmount),
+					whatsappNumber: settings.whatsappNumber ?? "",
+					contactPhonePrimary: settings.contactPhonePrimary ?? "",
+					contactPhoneSecondary: settings.contactPhoneSecondary ?? "",
+					address: settings.address ?? "",
+				}
+			: undefined,
+	});
+
+	const updateMutation = api.settings.update.useMutation({
+		onSuccess: () => void utils.settings.get.invalidate(),
+	});
+
+	if (isLoading) return <div className="h-96 animate-pulse rounded-lg bg-[#14163A]/5" />;
+
+	return (
+		<div className="space-y-8">
+			<Card>
+				<CardHeader>
+					<CardTitle>Site settings</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit((values) => updateMutation.mutate(values))} className="space-y-4">
+							<div className="grid grid-cols-2 gap-4">
+								<FormField control={form.control} name="shopName" render={({ field }) => (
+									<FormItem><FormLabel>Shop name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+								)} />
+								<FormField control={form.control} name="minimumOrderAmount" render={({ field }) => (
+									<FormItem><FormLabel>Minimum order amount (₹)</FormLabel><FormControl><Input type="number" step="0.01" {...field} /></FormControl><FormMessage /></FormItem>
+								)} />
+							</div>
+
+							<FormField control={form.control} name="shopAddress" render={({ field }) => (
+								<FormItem><FormLabel>Shop address (shown on bills)</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+
+							<FormField control={form.control} name="announcementText" render={({ field }) => (
+								<FormItem><FormLabel>Announcement bar text</FormLabel><FormControl><Input placeholder="Welcome to SS Crackers Shop — 80% discount live!" {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+
+							<div className="grid grid-cols-3 gap-4">
+								<FormField control={form.control} name="whatsappNumber" render={({ field }) => (
+									<FormItem><FormLabel>WhatsApp number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+								)} />
+								<FormField control={form.control} name="contactPhonePrimary" render={({ field }) => (
+									<FormItem><FormLabel>Phone 1</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+								)} />
+								<FormField control={form.control} name="contactPhoneSecondary" render={({ field }) => (
+									<FormItem><FormLabel>Phone 2</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+								)} />
+							</div>
+
+							<FormField control={form.control} name="address" render={({ field }) => (
+								<FormItem><FormLabel>Footer address</FormLabel><FormControl><Textarea rows={2} {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+
+							{updateMutation.error ? <p className="text-sm font-medium text-[#C8202F]">{updateMutation.error.message}</p> : null}
+
+							<Button type="submit" disabled={updateMutation.isPending} className="bg-[#14163A] hover:bg-[#1f2257]">
+								{updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save settings"}
+							</Button>
+						</form>
+					</Form>
+				</CardContent>
+			</Card>
+
+			<BankAccountsManager />
+		</div>
+	);
+}
+
+const bankAccountSchema = z.object({
+	bankName: z.string().min(1, "Required"),
+	accountHolderName: z.string().min(1, "Required"),
+	accountNumber: z.string().min(4, "Required"),
+	ifscCode: z.string().min(4, "Required"),
+	branchName: z.string().optional().or(z.literal("")),
+});
+
+type BankAccountValues = z.infer<typeof bankAccountSchema>;
+
+function BankAccountsManager() {
+	const utils = api.useUtils();
+	const { data: accounts = [] } = api.bankAccount.adminList.useQuery();
+	const [adding, setAdding] = useState(false);
+
+	const form = useForm<BankAccountValues>({
+		resolver: zodResolver(bankAccountSchema),
+		defaultValues: { bankName: "", accountHolderName: "", accountNumber: "", ifscCode: "", branchName: "" },
+	});
+
+	const createMutation = api.bankAccount.create.useMutation({
+		onSuccess: () => {
+			void utils.bankAccount.adminList.invalidate();
+			setAdding(false);
+			form.reset();
+		},
+	});
+
+	const deleteMutation = api.bankAccount.delete.useMutation({
+		onSuccess: () => void utils.bankAccount.adminList.invalidate(),
+	});
+
+	return (
+		<Card>
+			<CardHeader className="flex flex-row items-center justify-between">
+				<CardTitle>Bank accounts</CardTitle>
+				{!adding ? (
+					<Button size="sm" variant="outline" onClick={() => setAdding(true)} className="gap-1.5">
+						<Plus className="h-4 w-4" />
+						Add account
+					</Button>
+				) : null}
+			</CardHeader>
+			<CardContent className="space-y-3">
+				{accounts.map((account) => (
+					<div key={account.id} className="flex items-center justify-between gap-4 rounded-md border border-[#14163A]/10 px-4 py-3">
+						<div className="text-sm">
+							<p className="font-semibold text-[#14163A]">{account.bankName}</p>
+							<p className="text-[#14163A]/60">
+								{account.accountHolderName} · A/C {account.accountNumber} · IFSC {account.ifscCode}
+							</p>
+						</div>
+						<Button size="icon" variant="ghost" onClick={() => deleteMutation.mutate({ id: account.id })} aria-label="Delete bank account">
+							<Trash2 className="h-4 w-4 text-[#C8202F]" />
+						</Button>
+					</div>
+				))}
+
+				{adding ? (
+					<Form {...form}>
+						<form
+							onSubmit={form.handleSubmit((values) => createMutation.mutate(values))}
+							className="grid grid-cols-2 gap-3 rounded-md border border-dashed border-[#14163A]/20 p-4"
+						>
+							<FormField control={form.control} name="bankName" render={({ field }) => (
+								<FormItem><FormLabel>Bank name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+							<FormField control={form.control} name="accountHolderName" render={({ field }) => (
+								<FormItem><FormLabel>Account holder</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+							<FormField control={form.control} name="accountNumber" render={({ field }) => (
+								<FormItem><FormLabel>Account number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+							<FormField control={form.control} name="ifscCode" render={({ field }) => (
+								<FormItem><FormLabel>IFSC code</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+							<FormField control={form.control} name="branchName" render={({ field }) => (
+								<FormItem className="col-span-2"><FormLabel>Branch (optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+							)} />
+							<div className="col-span-2 flex gap-2">
+								<Button type="submit" size="sm" disabled={createMutation.isPending} className="bg-[#14163A] hover:bg-[#1f2257]">
+									Save account
+								</Button>
+								<Button type="button" size="sm" variant="ghost" onClick={() => setAdding(false)}>
+									Cancel
+								</Button>
+							</div>
+						</form>
+					</Form>
+				) : null}
+			</CardContent>
+		</Card>
+	);
+}
