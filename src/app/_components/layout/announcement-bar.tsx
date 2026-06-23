@@ -11,7 +11,7 @@ export function AnnouncementBar({ text, className }: AnnouncementBarProps) {
 	return (
 		<div
 			className={cn(
-				"relative overflow-hidden bg-[#C8202F] py-2 text-white",
+				"relative overflow-hidden bg-primary py-2 text-primary-foreground",
 				className,
 			)}
 			role="status"

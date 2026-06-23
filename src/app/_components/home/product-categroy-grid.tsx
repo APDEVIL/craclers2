@@ -9,36 +9,25 @@ export async function ProductCategoryGrid() {
 	if (categories.length === 0) return null;
 
 	return (
-		<section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-			<h2 className="text-center font-extrabold text-3xl text-[#14163A]">
-				Our products
-			</h2>
-			<div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+		<nav aria-label="Shop by category" className="border-foreground/8 border-b bg-white">
+			<div className="mx-auto flex max-w-7xl gap-3 overflow-x-auto px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] sm:px-6 [&::-webkit-scrollbar]:hidden">
 				{categories.map((category) => (
 					<Link
-						className="flex items-center gap-4 rounded-lg bg-[#D9A640]/90 px-6 py-5 font-bold text-[#14163A] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+						className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-foreground/12 bg-secondary/60 px-4 py-2 font-semibold text-foreground text-sm transition hover:border-accent hover:bg-accent/15"
 						href={`/estimate?category=${category.slug}`}
 						key={category.id}
 					>
-						<span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white/70">
+						<span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white text-xs">
 							{category.imageUrl ? (
-								<Image
-									alt=""
-									className="h-7 w-7 object-contain"
-									height={28}
-									src={category.imageUrl}
-									width={28}
-								/>
+								<Image alt="" className="h-4 w-4 object-contain" height={16} src={category.imageUrl} width={16} />
 							) : (
-								<span className="text-lg">✺</span>
+								"✺"
 							)}
 						</span>
-						<span className="text-base uppercase tracking-wide">
-							{category.name}
-						</span>
+						{category.name}
 					</Link>
 				))}
 			</div>
-		</section>
+		</nav>
 	);
 }

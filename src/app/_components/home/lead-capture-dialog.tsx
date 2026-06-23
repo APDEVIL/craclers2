@@ -44,7 +44,7 @@ export function LeadCaptureDialog() {
 		<Dialog onOpenChange={handleOpenChange} open={open}>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle className="text-[#C8202F]">
+					<DialogTitle className="text-primary">
 						To know more about offers and discounts
 					</DialogTitle>
 					<DialogDescription>
@@ -83,13 +83,13 @@ export function LeadCaptureDialog() {
 					</div>
 
 					{submitMutation.error ? (
-						<p className="font-medium text-[#C8202F] text-sm">
+						<p className="font-medium text-destructive text-sm">
 							Something went wrong — please try again.
 						</p>
 					) : null}
 
 					<Button
-						className="w-full bg-[#14163A] font-semibold hover:bg-[#1f2257]"
+						className="w-full bg-primary font-semibold hover:bg-primary/90"
 						disabled={submitMutation.isPending}
 						type="submit"
 					>

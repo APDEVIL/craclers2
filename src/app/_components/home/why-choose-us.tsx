@@ -34,10 +34,10 @@ const FEATURES = [
 export function WhyChooseUs() {
 	return (
 		<section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-			<h2 className="text-center font-extrabold text-3xl text-[#14163A]">
+			<h2 className="text-center font-extrabold text-3xl text-foreground">
 				Why choose us?
 			</h2>
-			<p className="mx-auto mt-4 max-w-3xl text-center text-[#14163A]/65">
+			<p className="mx-auto mt-4 max-w-3xl text-center text-foreground/65">
 				We&apos;re a Sivakasi-based manufacturer shipping certified-quality
 				crackers across Tamil Nadu and beyond, with an estimate-first buying
 				experience that keeps pricing transparent from the very first click.
@@ -46,13 +46,13 @@ export function WhyChooseUs() {
 			<div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
 				{FEATURES.map((feature) => (
 					<div className="space-y-2" key={feature.title}>
-						<span className="grid h-12 w-12 place-items-center rounded-full bg-[#14163A]/5 text-[#C8202F] text-xl">
+						<span className="grid h-12 w-12 place-items-center rounded-full bg-foreground/5 text-primary text-xl">
 							✺
 						</span>
-						<h3 className="font-bold text-[#14163A] text-lg">
+						<h3 className="font-bold text-foreground text-lg">
 							{feature.title}
 						</h3>
-						<p className="text-[#14163A]/65 text-sm leading-relaxed">
+						<p className="text-foreground/65 text-sm leading-relaxed">
 							{feature.description}
 						</p>
 					</div>

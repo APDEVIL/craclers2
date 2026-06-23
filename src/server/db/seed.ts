@@ -194,7 +194,7 @@ async function seedSettings() {
 
 	await db.insert(siteSetting).values({
 		id: 1,
-		shopName: "Sri's Crackers Shop",
+		shopName: "Sri'S Crackers Shop",
 		shopAddress: "3/1232/11, Sattur Road, Paraipatti, Sivakasi - 626 189",
 		minimumOrderAmount: "3000.00",
 		whatsappNumber: "9626965591",

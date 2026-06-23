@@ -15,58 +15,60 @@
 	--popover: #ffffff;
 	--popover-foreground: #14163a;
 
-	--primary: #14163a;
-	--primary-foreground: #ffffff;
+	--primary: #8c1228;
+	--primary-foreground: #fff8ec;
 
 	--secondary: #fbeed1;
 	--secondary-foreground: #14163a;
 
-	--muted: #f3f3f8;
-	--muted-foreground: #6b6d85;
+	--muted: #f6f1e8;
+	--muted-foreground: #6e6456;
 
 	--accent: #d9a640;
 	--accent-foreground: #14163a;
 
-	--destructive: #c8202f;
+	--destructive: #dc2626;
 	--destructive-foreground: #ffffff;
 
-	--border: #e6e6ee;
-	--input: #e6e6ee;
+	--border: #ece2d0;
+	--input: #ece2d0;
 	--ring: #d9a640;
 
-	--chart-1: #14163a;
+	--chart-1: #8c1228;
 	--chart-2: #d9a640;
-	--chart-3: #c8202f;
-	--chart-4: #6b6d85;
+	--chart-3: #14163a;
+	--chart-4: #c8202f;
 	--chart-5: #25d366;
 
 	/* brand tokens — reach for these directly when Tailwind's semantic
 	   colors above don't fit (e.g. the WhatsApp button, marquee bar) */
 	--brand-navy: #14163a;
+	--brand-maroon: #8c1228;
 	--brand-gold: #d9a640;
 	--brand-red: #c8202f;
+	--brand-cream: #fbeed1;
 	--brand-whatsapp: #25d366;
 }
 
 .dark {
-	--background: #0f1129;
-	--foreground: #f3f3f8;
-	--card: #14163a;
-	--card-foreground: #f3f3f8;
-	--popover: #14163a;
-	--popover-foreground: #f3f3f8;
+	--background: #160d12;
+	--foreground: #f5efe6;
+	--card: #241319;
+	--card-foreground: #f5efe6;
+	--popover: #241319;
+	--popover-foreground: #f5efe6;
 	--primary: #d9a640;
-	--primary-foreground: #14163a;
-	--secondary: #1f2257;
-	--secondary-foreground: #f3f3f8;
-	--muted: #1f2257;
-	--muted-foreground: #a3a5c2;
+	--primary-foreground: #1b0f14;
+	--secondary: #34191f;
+	--secondary-foreground: #f5efe6;
+	--muted: #34191f;
+	--muted-foreground: #c9b7ac;
 	--accent: #d9a640;
-	--accent-foreground: #14163a;
+	--accent-foreground: #1b0f14;
 	--destructive: #e0394a;
 	--destructive-foreground: #ffffff;
-	--border: #2a2d63;
-	--input: #2a2d63;
+	--border: #34191f;
+	--input: #34191f;
 	--ring: #d9a640;
 }
 

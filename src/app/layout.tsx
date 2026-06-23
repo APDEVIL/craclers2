@@ -23,7 +23,7 @@ const bodyFont = Manrope({
 });
 
 export const metadata: Metadata = {
-	title: "Sri's Crackers Shop — Brighten your Diwali!",
+	title: "Sri'S Crackers Shop — Brighten your Diwali!",
 	description:
 		"Wholesale Sivakasi crackers at manufacturer-direct prices. Build your estimate online and we'll confirm your order over a phone call.",
 };
