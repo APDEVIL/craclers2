@@ -61,17 +61,17 @@ export function PriceListTable({ categoryId, search }: PriceListTableProps) {
 			<table className="w-full min-w-[860px] border-collapse text-sm">
 				<thead>
 					<tr className="bg-[#14163A] text-left text-white">
-						<th className="w-20 px-4 py-3 font-semibold">Image</th>
-						<th className="w-16 px-4 py-3 font-semibold">Code</th>
-						<th className="px-4 py-3 font-semibold">Product name</th>
-						<th className="w-28 px-4 py-3 text-right font-semibold">
+						<th className="w-20 px-4 py-3 font-extrabold text-base">Image</th>
+						<th className="w-16 px-4 py-3 font-extrabold text-base">Code</th>
+						<th className="px-4 py-3 font-extrabold text-base">Product name</th>
+						<th className="w-28 px-4 py-3 text-right font-extrabold text-base">
 							MRP price
 						</th>
-						<th className="w-32 px-4 py-3 text-right font-semibold">
+						<th className="w-32 px-4 py-3 text-right font-extrabold text-base">
 							Discount price
 						</th>
-						<th className="w-28 px-4 py-3 text-center font-semibold">Qty</th>
-						<th className="w-32 px-4 py-3 text-right font-semibold">Total</th>
+						<th className="w-28 px-4 py-3 text-center font-extrabold text-base">Qty</th>
+						<th className="w-32 px-4 py-3 text-right font-extrabold text-base">Total</th>
 					</tr>
 				</thead>
 				<tbody>

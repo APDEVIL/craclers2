@@ -2,38 +2,20 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UploadButton } from "@/lib/uploadthing";
 import { api } from "@/trpc/react";
+
+const SPECIAL_CHARS = ["½", "¾", "¼", '"', "'", "–", "—", "&", "×", "°"] as const;
 
 const productFormSchema = z.object({
 	categoryId: z.string().min(1, "Select a category"),
@@ -42,9 +24,7 @@ const productFormSchema = z.object({
 	unit: z.string().min(1).max(20),
 	imageUrl: z.string().url().optional().or(z.literal("")),
 	mrpPrice: z.coerce.number().positive("MRP must be greater than 0"),
-	discountPrice: z.coerce
-		.number()
-		.positive("Discount price must be greater than 0"),
+	discountPrice: z.coerce.number().positive("Discount price must be greater than 0"),
 	sortOrder: z.coerce.number().int(),
 	isActive: z.boolean(),
 });
@@ -86,14 +66,9 @@ function defaultsFor(product?: ProductFormProduct): ProductFormValues {
 	};
 }
 
-export function ProductFormDialog({
-	open,
-	onOpenChange,
-	product,
-	categories,
-	onSaved,
-}: ProductFormDialogProps) {
+export function ProductFormDialog({ open, onOpenChange, product, categories, onSaved }: ProductFormDialogProps) {
 	const isEditing = Boolean(product);
+	const nameInputRef = useRef<HTMLInputElement | null>(null);
 
 	const form = useForm<ProductFormValues>({
 		resolver: zodResolver(productFormSchema),
@@ -133,13 +108,33 @@ export function ProductFormDialog({
 		}
 	};
 
+	const insertSpecialChar = (char: string) => {
+		const input = nameInputRef.current;
+		const currentValue = form.getValues("name");
+
+		if (!input) {
+			form.setValue("name", currentValue + char, { shouldDirty: true, shouldValidate: true });
+			return;
+		}
+
+		const start = input.selectionStart ?? currentValue.length;
+		const end = input.selectionEnd ?? currentValue.length;
+		const nextValue = currentValue.slice(0, start) + char + currentValue.slice(end);
+
+		form.setValue("name", nextValue, { shouldDirty: true, shouldValidate: true });
+
+		requestAnimationFrame(() => {
+			input.focus();
+			const cursorPos = start + char.length;
+			input.setSelectionRange(cursorPos, cursorPos);
+		});
+	};
+
 	return (
 		<Dialog onOpenChange={onOpenChange} open={open}>
 			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
-					<DialogTitle>
-						{isEditing ? "Edit product" : "Add product"}
-					</DialogTitle>
+					<DialogTitle>{isEditing ? "Edit product" : "Add product"}</DialogTitle>
 				</DialogHeader>
 
 				<Form {...form}>
@@ -205,8 +200,28 @@ export function ProductFormDialog({
 								<FormItem>
 									<FormLabel>Product name</FormLabel>
 									<FormControl>
-										<Input placeholder="3 ½ Lakshmi" {...field} />
+										<Input
+											placeholder="3 ½ Lakshmi"
+											{...field}
+											ref={(el) => {
+												field.ref(el);
+												nameInputRef.current = el;
+											}}
+										/>
 									</FormControl>
+									<div className="flex flex-wrap gap-1.5 pt-1">
+										{SPECIAL_CHARS.map((char) => (
+											<button
+												className="rounded-md border border-[#5C1024]/15 bg-[#5C1024]/5 px-2.5 py-1 font-semibold text-[#5C1024] text-sm transition hover:bg-[#5C1024]/10"
+												key={char}
+												onClick={() => insertSpecialChar(char)}
+												tabIndex={-1}
+												type="button"
+											>
+												{char}
+											</button>
+										))}
+									</div>
 									<FormMessage />
 								</FormItem>
 							)}
@@ -248,28 +263,37 @@ export function ProductFormDialog({
 								<FormItem>
 									<FormLabel>Product image</FormLabel>
 									<div className="flex items-center gap-3">
-										{/* Replace the existing <img /> inside your imageUrl FormField with this: */}
 										{field.value ? (
-											<Image
-												alt="Category icon"
-												className="h-10 w-10 rounded-md border object-contain"
-												height={40}
-												src={field.value}
-												width={40}
-											/>
+											<div className="relative h-12 w-12 shrink-0">
+												<img
+													alt=""
+													className="h-12 w-12 rounded-md border object-cover"
+													src={field.value}
+												/>
+												<button
+													type="button"
+													onClick={() => field.onChange("")}
+													className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#5C1024] text-white shadow-sm transition hover:bg-[#420B19]"
+													tabIndex={-1}
+													aria-label="Remove image"
+												>
+													×
+												</button>
+											</div>
 										) : null}
-										<UploadButton
-											appearance={{
-												button:
-													"bg-[#14163A] text-white text-xs px-3 py-1.5 rounded-md",
-												allowedContent: "hidden",
-											}}
-											endpoint="productImage"
-											onClientUploadComplete={(res) => {
-												const url = res[0]?.url;
-												if (url) field.onChange(url);
-											}}
-										/>
+										{!field.value && (
+											<UploadButton
+												appearance={{
+													button: "bg-[#5C1024] text-white text-xs px-3 py-1.5 rounded-md",
+													allowedContent: "hidden",
+												}}
+												endpoint="productImage"
+												onClientUploadComplete={(res) => {
+													const url = res[0]?.url;
+													if (url) field.onChange(url);
+												}}
+											/>
+										)}
 									</div>
 									<FormMessage />
 								</FormItem>
@@ -296,38 +320,19 @@ export function ProductFormDialog({
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-end gap-2 pb-1.5">
 										<FormControl>
-											<Checkbox
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
+											<Checkbox checked={field.value} onCheckedChange={field.onChange} />
 										</FormControl>
-										<FormLabel className="!mt-0">
-											Visible on price list
-										</FormLabel>
+										<FormLabel className="!mt-0">Visible on price list</FormLabel>
 									</FormItem>
 								)}
 							/>
 						</div>
 
-						{mutation.error ? (
-							<p className="font-medium text-[#C8202F] text-sm">
-								{mutation.error.message}
-							</p>
-						) : null}
+						{mutation.error ? <p className="font-medium text-[#D7263D] text-sm">{mutation.error.message}</p> : null}
 
 						<DialogFooter>
-							<Button
-								className="bg-[#14163A] hover:bg-[#1f2257]"
-								disabled={mutation.isPending}
-								type="submit"
-							>
-								{mutation.isPending ? (
-									<Loader2 className="h-4 w-4 animate-spin" />
-								) : isEditing ? (
-									"Save changes"
-								) : (
-									"Add product"
-								)}
+							<Button className="bg-[#5C1024] hover:bg-[#420B19]" disabled={mutation.isPending} type="submit">
+								{mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isEditing ? "Save changes" : "Add product"}
 							</Button>
 						</DialogFooter>
 					</form>
