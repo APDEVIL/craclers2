@@ -131,7 +131,7 @@ export const product = createTable(
 		categoryId: text("category_id")
 			.notNull()
 			.references(() => category.id, { onDelete: "cascade" }),
-		
+
 		code: text("product_code").notNull(), // was: integer("product_code").notNull()
 		name: text("name").notNull(),
 		unit: text("unit").notNull().default("PKT"),

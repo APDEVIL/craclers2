@@ -2,20 +2,51 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { UploadButton } from "@/lib/uploadthing";
 import { api } from "@/trpc/react";
 
-const SPECIAL_CHARS = ["½", "¾", "¼", '"', "'", "–", "—", "&", "×", "°"] as const;
+const SPECIAL_CHARS = [
+	"½",
+	"¾",
+	"¼",
+	'"',
+	"'",
+	"–",
+	"—",
+	"&",
+	"×",
+	"°",
+] as const;
 
 const productFormSchema = z.object({
 	categoryId: z.string().min(1, "Select a category"),
@@ -24,7 +55,9 @@ const productFormSchema = z.object({
 	unit: z.string().min(1).max(20).default("PKT"),
 	imageUrl: z.string().url().optional().or(z.literal("")),
 	mrpPrice: z.coerce.number().positive("MRP must be greater than 0"),
-	discountPrice: z.coerce.number().positive("Discount price must be greater than 0"),
+	discountPrice: z.coerce
+		.number()
+		.positive("Discount price must be greater than 0"),
 	sortOrder: z.coerce.number().int().default(0),
 	isActive: z.boolean().default(true),
 });
@@ -68,7 +101,9 @@ function defaultsFor(product?: ProductFormProduct): ProductFormValues {
 		code: product?.code ?? "",
 		name: product?.name ?? "",
 		unit: product?.unit ?? "PKT",
-		imageUrl: isValidUrl(product?.imageUrl) ? (product?.imageUrl as string) : "",
+		imageUrl: isValidUrl(product?.imageUrl)
+			? (product?.imageUrl as string)
+			: "",
 		mrpPrice: product ? Number(product.mrpPrice) : 0,
 		discountPrice: product ? Number(product.discountPrice) : 0,
 		sortOrder: product?.sortOrder ?? 0,
@@ -76,11 +111,21 @@ function defaultsFor(product?: ProductFormProduct): ProductFormValues {
 	};
 }
 
-export function ProductFormDialog({ open, onOpenChange, product, categories, onSaved }: ProductFormDialogProps) {
+export function ProductFormDialog({
+	open,
+	onOpenChange,
+	product,
+	categories,
+	onSaved,
+}: ProductFormDialogProps) {
 	const isEditing = Boolean(product);
 	const nameInputRef = useRef<HTMLInputElement | null>(null);
 
-	const form = useForm<z.input<typeof productFormSchema>, any, ProductFormValues>({
+	const form = useForm<
+		z.input<typeof productFormSchema>,
+		unknown,
+		ProductFormValues
+	>({
 		resolver: zodResolver(productFormSchema),
 		defaultValues: defaultsFor(product),
 	});
@@ -123,15 +168,22 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 		const currentValue = form.getValues("name");
 
 		if (!input) {
-			form.setValue("name", currentValue + char, { shouldDirty: true, shouldValidate: true });
+			form.setValue("name", currentValue + char, {
+				shouldDirty: true,
+				shouldValidate: true,
+			});
 			return;
 		}
 
 		const start = input.selectionStart ?? currentValue.length;
 		const end = input.selectionEnd ?? currentValue.length;
-		const nextValue = currentValue.slice(0, start) + char + currentValue.slice(end);
+		const nextValue =
+			currentValue.slice(0, start) + char + currentValue.slice(end);
 
-		form.setValue("name", nextValue, { shouldDirty: true, shouldValidate: true });
+		form.setValue("name", nextValue, {
+			shouldDirty: true,
+			shouldValidate: true,
+		});
 
 		requestAnimationFrame(() => {
 			input.focus();
@@ -144,7 +196,9 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 		<Dialog onOpenChange={onOpenChange} open={open}>
 			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
-					<DialogTitle>{isEditing ? "Edit product" : "Add product"}</DialogTitle>
+					<DialogTitle>
+						{isEditing ? "Edit product" : "Add product"}
+					</DialogTitle>
 				</DialogHeader>
 
 				<Form {...form}>
@@ -275,7 +329,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 									<div className="flex items-center gap-3">
 										{field.value ? (
 											<div className="relative h-12 w-12 shrink-0">
-												<img
+												<Image
 													alt=""
 													className="h-12 w-12 rounded-md border object-cover"
 													src={field.value}
@@ -294,7 +348,8 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 										{!field.value && (
 											<UploadButton
 												appearance={{
-													button: "bg-[#5C1024] text-white text-xs px-3 py-1.5 rounded-md",
+													button:
+														"bg-[#5C1024] text-white text-xs px-3 py-1.5 rounded-md",
 													allowedContent: "hidden",
 												}}
 												endpoint="productImage"
@@ -330,19 +385,38 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-end gap-2 pb-1.5">
 										<FormControl>
-											<Checkbox checked={field.value} onCheckedChange={field.onChange} />
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
 										</FormControl>
-										<FormLabel className="!mt-0">Visible on price list</FormLabel>
+										<FormLabel className="!mt-0">
+											Visible on price list
+										</FormLabel>
 									</FormItem>
 								)}
 							/>
 						</div>
 
-						{mutation.error ? <p className="font-medium text-[#D7263D] text-sm">{mutation.error.message}</p> : null}
+						{mutation.error ? (
+							<p className="font-medium text-[#D7263D] text-sm">
+								{mutation.error.message}
+							</p>
+						) : null}
 
 						<DialogFooter>
-							<Button className="bg-[#5C1024] hover:bg-[#420B19]" disabled={mutation.isPending} type="submit">
-								{mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : isEditing ? "Save changes" : "Add product"}
+							<Button
+								className="bg-[#5C1024] hover:bg-[#420B19]"
+								disabled={mutation.isPending}
+								type="submit"
+							>
+								{mutation.isPending ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
+								) : isEditing ? (
+									"Save changes"
+								) : (
+									"Add product"
+								)}
 							</Button>
 						</DialogFooter>
 					</form>

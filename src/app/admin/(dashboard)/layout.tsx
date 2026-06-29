@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/app/_components/admin/admin-sidebar";
 import { getSession } from "@/server/better-auth/server";
 
-export default async function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminDashboardLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const session = await getSession();
 
 	if (!session?.user) {

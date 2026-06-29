@@ -70,8 +70,12 @@ export function PriceListTable({ categoryId, search }: PriceListTableProps) {
 						<th className="w-32 px-4 py-3 text-right font-extrabold text-base">
 							Discount price
 						</th>
-						<th className="w-28 px-4 py-3 text-center font-extrabold text-base">Qty</th>
-						<th className="w-32 px-4 py-3 text-right font-extrabold text-base">Total</th>
+						<th className="w-28 px-4 py-3 text-center font-extrabold text-base">
+							Qty
+						</th>
+						<th className="w-32 px-4 py-3 text-right font-extrabold text-base">
+							Total
+						</th>
 					</tr>
 				</thead>
 				<tbody>

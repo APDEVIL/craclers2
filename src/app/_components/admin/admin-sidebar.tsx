@@ -1,6 +1,16 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, LayoutDashboard, ListTree, LogOut, Menu, Package, Receipt, Settings } from "lucide-react";
+import {
+	ChevronLeft,
+	ChevronRight,
+	LayoutDashboard,
+	ListTree,
+	LogOut,
+	Menu,
+	Package,
+	Receipt,
+	Settings,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,14 +46,21 @@ function AdminNavLinks({
 
 	return (
 		<>
-			<div className={cn("flex items-center gap-3 px-3 py-6", collapsed && "justify-center px-0")}>
+			<div
+				className={cn(
+					"flex items-center gap-3 px-3 py-6",
+					collapsed && "justify-center px-0",
+				)}
+			>
 				<span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[var(--brand-gold)]/15 font-bold text-[var(--brand-gold)] text-base">
 					SS
 				</span>
 				{!collapsed && (
 					<span className="font-bold text-sm leading-tight">
 						SS Crackers Shop
-						<span className="block font-medium text-white/55 text-xs">Admin panel</span>
+						<span className="block font-medium text-white/55 text-xs">
+							Admin panel
+						</span>
 					</span>
 				)}
 			</div>
@@ -80,7 +97,9 @@ function AdminNavLinks({
 				<Button
 					className={cn(
 						"text-white/75 hover:bg-white/10 hover:text-white",
-						collapsed ? "w-10 justify-center px-0" : "w-full justify-start gap-3",
+						collapsed
+							? "w-10 justify-center px-0"
+							: "w-full justify-start gap-3",
 					)}
 					onClick={handleSignOut}
 					title={collapsed ? "Sign out" : undefined}
