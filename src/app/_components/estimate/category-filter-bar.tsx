@@ -38,7 +38,7 @@ export function CategoryFilterBar({
 	const cart = useCart();
 
 	return (
-		<div className="sticky top-2 z-20 flex flex-col gap-3 rounded-lg bg-[#14163A] p-4 text-white shadow-md sm:flex-row sm:items-center sm:justify-between">
+		<div className="sticky top-[100px] z-20 flex flex-col gap-3 rounded-lg bg-[#14163A] p-4 text-white shadow-md sm:flex-row sm:items-center sm:justify-between">
 			<div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
 				<Select
 					onValueChange={(value) =>
