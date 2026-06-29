@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/trpc/react";
 
 export interface CartLineMeta {
-	code: number;
+	code: string;
 	name: string;
 	unit: string;
 	imageUrl: string | null;
