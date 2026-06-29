@@ -236,7 +236,7 @@ export const orderItem = createTable(
 			onDelete: "set null",
 		}),
 		// snapshotted so historical bills stay accurate even if admin edits prices later
-		productCode: integer("product_code").notNull(),
+		productCode: text("product_code").notNull(),
 		productName: text("product_name").notNull(),
 		unit: text("unit").notNull(),
 		mrpPrice: numeric("mrp_price", { precision: 10, scale: 2 }).notNull(),
