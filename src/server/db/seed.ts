@@ -1733,7 +1733,8 @@ async function seedProducts() {
 
 		rows.push({
 			categoryId,
-			code: nextCode++,
+			// inside seedProducts(), where rows are built:
+			code: String(nextCode++), // was: code: nextCode++,
 			name: raw.name,
 			unit: raw.unit,
 			imageUrl: raw.imageUrl,
