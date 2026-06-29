@@ -19,14 +19,14 @@ const SPECIAL_CHARS = ["½", "¾", "¼", '"', "'", "–", "—", "&", "×", "°"
 
 const productFormSchema = z.object({
 	categoryId: z.string().min(1, "Select a category"),
-	code: z.coerce.number().int().positive("Code must be a positive number"),
+	code: z.string().trim().min(1, "Enter a code").max(30, "Code is too long"),
 	name: z.string().min(1, "Enter a product name").max(200),
-	unit: z.string().min(1).max(20),
+	unit: z.string().min(1).max(20).default("PKT"),
 	imageUrl: z.string().url().optional().or(z.literal("")),
 	mrpPrice: z.coerce.number().positive("MRP must be greater than 0"),
 	discountPrice: z.coerce.number().positive("Discount price must be greater than 0"),
-	sortOrder: z.coerce.number().int(),
-	isActive: z.boolean(),
+	sortOrder: z.coerce.number().int().default(0),
+	isActive: z.boolean().default(true),
 });
 
 type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -34,7 +34,7 @@ type ProductFormValues = z.infer<typeof productFormSchema>;
 export interface ProductFormProduct {
 	id: string;
 	categoryId: string;
-	code: number;
+	code: string;
 	name: string;
 	unit: string;
 	imageUrl: string | null;
@@ -52,13 +52,23 @@ interface ProductFormDialogProps {
 	onSaved?: () => void;
 }
 
+function isValidUrl(url: string | null | undefined): boolean {
+	if (!url) return false;
+	try {
+		new URL(url);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
 function defaultsFor(product?: ProductFormProduct): ProductFormValues {
 	return {
 		categoryId: product?.categoryId ?? "",
-		code: product?.code ?? 1,
+		code: product?.code ?? "",
 		name: product?.name ?? "",
 		unit: product?.unit ?? "PKT",
-		imageUrl: product?.imageUrl ?? "",
+		imageUrl: isValidUrl(product?.imageUrl) ? (product?.imageUrl as string) : "",
 		mrpPrice: product ? Number(product.mrpPrice) : 0,
 		discountPrice: product ? Number(product.discountPrice) : 0,
 		sortOrder: product?.sortOrder ?? 0,
@@ -70,7 +80,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 	const isEditing = Boolean(product);
 	const nameInputRef = useRef<HTMLInputElement | null>(null);
 
-	const form = useForm<ProductFormValues>({
+	const form = useForm<z.input<typeof productFormSchema>, any, ProductFormValues>({
 		resolver: zodResolver(productFormSchema),
 		defaultValues: defaultsFor(product),
 	});
@@ -172,7 +182,7 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 									<FormItem>
 										<FormLabel>Code</FormLabel>
 										<FormControl>
-											<Input type="number" {...field} />
+											<Input placeholder="e.g. 63 or RB-50" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -271,11 +281,11 @@ export function ProductFormDialog({ open, onOpenChange, product, categories, onS
 													src={field.value}
 												/>
 												<button
-													type="button"
-													onClick={() => field.onChange("")}
-													className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#5C1024] text-white shadow-sm transition hover:bg-[#420B19]"
-													tabIndex={-1}
 													aria-label="Remove image"
+													className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#5C1024] text-white shadow-sm transition hover:bg-[#420B19]"
+													onClick={() => field.onChange("")}
+													tabIndex={-1}
+													type="button"
 												>
 													×
 												</button>

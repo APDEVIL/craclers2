@@ -2,16 +2,12 @@ import { TRPCError } from "@trpc/server";
 import { and, asc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 
-import {
-	createTRPCRouter,
-	protectedProcedure,
-	publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
 import { category, product } from "@/server/db/schema";
 
 const productInput = z.object({
-	categoryId: z.string(),
-	code: z.number().int().positive(),
+	categoryId: z.string().min(1, "Select a category"),
+	code: z.string().trim().min(1, "Enter a code").max(30, "Code is too long"),
 	name: z.string().min(1).max(200),
 	unit: z.string().min(1).max(20).default("PKT"),
 	imageUrl: z.string().url().optional(),
@@ -49,10 +45,7 @@ export const productRouter = createTRPCRouter({
 			.where(eq(category.isActive, true))
 			.orderBy(asc(category.sortOrder), asc(product.sortOrder));
 
-		const grouped = new Map<
-			string,
-			{ categoryName: string; discountLabel: string | null; items: typeof rows }
-		>();
+		const grouped = new Map<string, { categoryName: string; discountLabel: string | null; items: typeof rows }>();
 		for (const row of rows) {
 			const existing = grouped.get(row.categoryId);
 			if (existing) {
@@ -65,57 +58,42 @@ export const productRouter = createTRPCRouter({
 				});
 			}
 		}
-		return Array.from(grouped.entries()).map(([categoryId, v]) => ({
-			categoryId,
-			...v,
-		}));
+		return Array.from(grouped.entries()).map(([categoryId, v]) => ({ categoryId, ...v }));
 	}),
 
 	adminList: protectedProcedure
-		.input(
-			z.object({
-				categoryId: z.string().optional(),
-				search: z.string().optional(),
-			}),
-		)
+		.input(z.object({ categoryId: z.string().optional(), search: z.string().optional() }))
 		.query(({ ctx, input }) =>
 			ctx.db
 				.select()
 				.from(product)
 				.where(
 					and(
-						input.categoryId
-							? eq(product.categoryId, input.categoryId)
-							: undefined,
+						input.categoryId ? eq(product.categoryId, input.categoryId) : undefined,
 						input.search ? ilike(product.name, `%${input.search}%`) : undefined,
 					),
 				)
 				.orderBy(asc(product.sortOrder)),
 		),
 
-	create: protectedProcedure
-		.input(productInput)
-		.mutation(async ({ ctx, input }) => {
-			try {
-				const [created] = await ctx.db
-					.insert(product)
-					.values({
-						...input,
-						mrpPrice: toMoney(input.mrpPrice),
-						discountPrice: toMoney(input.discountPrice),
-					})
-					.returning();
-				return created;
-			} catch (err) {
-				if (isUniqueViolation(err)) {
-					throw new TRPCError({
-						code: "CONFLICT",
-						message: `Code ${input.code} is already used by another product`,
-					});
-				}
-				throw err;
+	create: protectedProcedure.input(productInput).mutation(async ({ ctx, input }) => {
+		try {
+			const [created] = await ctx.db
+				.insert(product)
+				.values({
+					...input,
+					mrpPrice: toMoney(input.mrpPrice),
+					discountPrice: toMoney(input.discountPrice),
+				})
+				.returning();
+			return created;
+		} catch (err) {
+			if (isUniqueViolation(err)) {
+				throw new TRPCError({ code: "CONFLICT", message: `Code "${input.code}" is already used by another product` });
 			}
-		}),
+			throw err;
+		}
+	}),
 
 	update: protectedProcedure
 		.input(productInput.partial().extend({ id: z.string() }))
@@ -127,9 +105,7 @@ export const productRouter = createTRPCRouter({
 					.set({
 						...rest,
 						...(mrpPrice !== undefined ? { mrpPrice: toMoney(mrpPrice) } : {}),
-						...(discountPrice !== undefined
-							? { discountPrice: toMoney(discountPrice) }
-							: {}),
+						...(discountPrice !== undefined ? { discountPrice: toMoney(discountPrice) } : {}),
 						updatedAt: new Date(),
 					})
 					.where(eq(product.id, id))
@@ -138,10 +114,7 @@ export const productRouter = createTRPCRouter({
 				return updated;
 			} catch (err) {
 				if (isUniqueViolation(err)) {
-					throw new TRPCError({
-						code: "CONFLICT",
-						message: "That code is already used by another product",
-					});
+					throw new TRPCError({ code: "CONFLICT", message: "That code is already used by another product" });
 				}
 				throw err;
 			}
@@ -162,7 +135,6 @@ export const productRouter = createTRPCRouter({
 	delete: protectedProcedure
 		.input(z.object({ id: z.string() }))
 		.mutation(async ({ ctx, input }) => {
-			// safe: orderItem snapshots product data and uses onDelete "set null"
 			await ctx.db.delete(product).where(eq(product.id, input.id));
 			return { success: true };
 		}),
