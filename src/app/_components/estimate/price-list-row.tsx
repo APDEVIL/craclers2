@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 
 export interface PriceListItem {
 	productId: string;
-	code: number;
+	code: string;
 	name: string;
 	unit: string;
 	imageUrl: string | null;

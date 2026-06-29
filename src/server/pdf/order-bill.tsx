@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 });
 
 export interface OrderBillItem {
-	productCode: number;
+	productCode: string;
 	productName: string;
 	unit: string;
 	discountPrice: string;
