@@ -43,7 +43,7 @@ export function PriceListRow({
 				</div>
 			</td>
 			<td className="px-4 py-3 font-medium text-[#14163A]/70">{item.code}</td>
-			<td className="px-4 py-3">
+			<td className="px-4 py-3 text-center">
 				<p className="font-semibold text-[#14163A]">{item.name}</p>
 				<p className="text-[#14163A]/55 text-xs">{item.unit}</p>
 			</td>

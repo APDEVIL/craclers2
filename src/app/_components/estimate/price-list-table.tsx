@@ -61,19 +61,21 @@ export function PriceListTable({ categoryId, search }: PriceListTableProps) {
 			<table className="w-full min-w-[860px] border-collapse text-sm">
 				<thead>
 					<tr className="bg-[#14163A] text-left text-white">
-						<th className="w-20 px-4 py-3 font-extrabold text-base">Image</th>
-						<th className="w-16 px-4 py-3 font-extrabold text-base">Code</th>
-						<th className="px-4 py-3 font-extrabold text-base">Product name</th>
-						<th className="w-28 px-4 py-3 text-right font-extrabold text-base">
+						<th className="w-20 px-4 py-3 font-black text-base">Image</th>
+						<th className="w-16 px-4 py-3 font-black text-base">Code</th>
+						<th className="px-4 py-3 text-center font-black text-base">
+							Product name
+						</th>
+						<th className="w-28 px-4 py-3 text-right font-black text-base">
 							MRP price
 						</th>
-						<th className="w-32 px-4 py-3 text-right font-extrabold text-base">
+						<th className="w-32 px-4 py-3 text-right font-black text-base">
 							Discount price
 						</th>
-						<th className="w-28 px-4 py-3 text-center font-extrabold text-base">
+						<th className="w-28 px-4 py-3 text-center font-black text-base">
 							Qty
 						</th>
-						<th className="w-32 px-4 py-3 text-right font-extrabold text-base">
+						<th className="w-32 px-4 py-3 text-right font-black text-base">
 							Total
 						</th>
 					</tr>
@@ -83,7 +85,7 @@ export function PriceListTable({ categoryId, search }: PriceListTableProps) {
 						<Fragment key={group.categoryId}>
 							<tr>
 								<td
-									className="bg-[#D9A640]/90 px-4 py-2.5 text-center font-bold text-[#14163A] text-sm uppercase tracking-wide"
+									className="bg-[#D9A640]/90 px-4 py-3 text-center font-black text-[#14163A] text-base uppercase tracking-wide"
 									colSpan={7}
 								>
 									{group.categoryName}
